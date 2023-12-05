@@ -20,4 +20,10 @@ public class ClientEvents {
     public static void registerRenderers (EntityRenderersEvent.RegisterRenderers event){
         event.registerEntityRenderer(Init.GENERIC_DRONE.get(), GenericDroneRendering::new);
     }
+
+    @SubscribeEvent
+    public static void registerModels (EntityRenderersEvent.RegisterLayerDefinitions event){
+        event.registerLayerDefinition(GenericDroneModel.MODEL_LAYER, GenericDroneModel::getLayerDefinitions);
+    }
+
 }
