@@ -85,6 +85,10 @@ minecraft {
                 }
             }
         }
+        clientdaddy {
+            parent runs.client
+            args '--username', 'DADDY'
+        }
 
         server {
             workingDirectory project.file('run')
