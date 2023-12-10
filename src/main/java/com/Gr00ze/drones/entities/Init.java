@@ -1,6 +1,6 @@
 package com.Gr00ze.drones.entities;
 
-import com.Gr00ze.drones.DronesMod;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -17,6 +17,7 @@ public class Init {
     public static final ResourceLocation GENERIC_DRONE_RL = new ResourceLocation(MOD_ID,"generic_drone");
     public static final RegistryObject<EntityType<GenericDrone>> GENERIC_DRONE = ENTITIES.register("generic_drone",
             () -> EntityType.Builder.of(GenericDrone::new, MobCategory.CREATURE)
+                    .sized(3,1)
                     .build(GENERIC_DRONE_RL.toString()));
 
     public static void register(IEventBus iEventBus){
