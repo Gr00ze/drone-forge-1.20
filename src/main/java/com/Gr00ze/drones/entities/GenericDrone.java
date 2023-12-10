@@ -79,6 +79,8 @@ public class GenericDrone extends Mob {
 
         float width = 3;
         float height = 1;
+
+        //rotation
         this.setBoundingBox(new AABB(
                 this.getX()-width/2,
                 this.getY(),
