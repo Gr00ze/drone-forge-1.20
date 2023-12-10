@@ -23,7 +23,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void registerModels (EntityRenderersEvent.RegisterLayerDefinitions event){
-        event.registerLayerDefinition(GenericDroneModel.MODEL_LAYER, GenericDroneModel::getLayerDefinitions);
+        event.registerLayerDefinition(GenericDroneModel.MODEL_LAYER, GenericDroneModel::createBodyLayer);
     }
 
 }
