@@ -40,7 +40,7 @@ public class GenericDrone extends Mob {
     @Override
     public boolean hurt(@NotNull DamageSource p_21016_, float p_21017_) {
 
-        setW1(getW1()+1);
+
 
         return super.hurt(p_21016_, p_21017_);
     }
