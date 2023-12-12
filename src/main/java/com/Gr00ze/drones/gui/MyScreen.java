@@ -18,9 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class MyScreen extends Screen{
     private final GenericDrone genericDrone;
-    private GenericDrone genericDroneServer;
-    private MyScreen editBox;
-    private GuiEventListener button;
+
+    private GuiEventListener buttonDown;
+    private GuiEventListener buttonUp;
 
     //    public MyScreen(MyMenu menu, Inventory inv, Component title) {
 //        super(menu, inv, title);
@@ -38,14 +38,23 @@ public class MyScreen extends Screen{
     protected void init() {
         super.init();
         // Aggiungi qui i widget e gli elementi della GUI
-        this.button = addRenderableWidget(Button.builder(
-                Component.literal("butt"),
-                this::button).bounds(10,10,20,50).build()
+        this.buttonDown = addRenderableWidget(Button.builder(
+                Component.literal("up"),
+                this::buttonUP).bounds(10,10,20,50).build()
+        );
+        this.buttonUp = addRenderableWidget(Button.builder(
+                Component.literal("down"),
+                this::buttonDown).bounds(40,10,20,50).build()
         );
     }
 
-    public void button(Button button){
-        genericDrone.setW1(genericDrone.getW1() != 0 ? 0 : 1);;
+    public void buttonUP(Button button){
+        genericDrone.setW1(genericDrone.getW1() + 1);;
+        System.out.println("WC= "+genericDrone.getW1());
+
+    }
+    public void buttonDown(Button button){
+        genericDrone.setW1(genericDrone.getW1() - 1);;
         System.out.println("WC= "+genericDrone.getW1());
 
     }
