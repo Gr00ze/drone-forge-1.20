@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Mob;
 
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
@@ -18,14 +19,14 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.Gr00ze.drones.entities.GenericDroneModel.motorRotations;
 
-public class GenericDrone extends Mob {
+public class GenericDrone extends Boat {
 
     static final EntityDataAccessor<Float> sync = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT);
 
     public float weight = 2;
     public float lastTickTime = 0;
     static int MAX_HEALTH = 20;
-    protected GenericDrone(EntityType<? extends Mob> entityType, Level level) {
+    protected GenericDrone(EntityType<? extends Boat> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -47,9 +48,9 @@ public class GenericDrone extends Mob {
 
 
 
-    @Override
+
     protected void registerGoals() {
-        super.registerGoals();
+
 
     }
 
@@ -113,6 +114,8 @@ public class GenericDrone extends Mob {
     public void setW1(float w1) {
         this.entityData.set(sync,w1);
     }
+
+
 }
 
 
