@@ -6,7 +6,11 @@ import com.Gr00ze.drones.gui.MyScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
@@ -19,6 +23,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Mod.EventBusSubscriber(modid = "drone_mod", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class DebugStuff extends Item {
-
+    public Capability<Integer> ID_DRONE = CapabilityManager.get(new CapabilityToken<Integer>() {});
     private static boolean isSetNow = false;
     public GenericDrone genericDrone;
 
@@ -41,62 +48,47 @@ public class DebugStuff extends Item {
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event ){
         Player player = event.getEntity();
         Entity entity = event.getTarget();
-
-        if(entity instanceof GenericDrone){
-            System.out.println(((GenericDrone) entity).getW1() +" " + player.level().isClientSide());
-        }
-        Item item = player.getMainHandItem().getItem();
-        boolean isMainHand = event.getHand() == InteractionHand.MAIN_HAND;
-        boolean isClientSide = player.level().isClientSide();
-        boolean isDebugStuff = item instanceof DebugStuff;
-        if (!isDebugStuff)return;
-        if(entity instanceof GenericDrone){
-            if(isMainHand)isSetNow = true;
-            if( isMainHand && !isClientSide){
-
-                ((DebugStuff) item).genericDrone = (GenericDrone) entity;
-                player.sendSystemMessage(Component.literal("Drone set on "+entity));
-
-            }
+        ItemStack itemStack = player.getMainHandItem();
+        boolean isDrone = entity instanceof GenericDrone;
+        boolean isDebugStuff = itemStack.getItem() instanceof DebugStuff;
+        if(!isDebugStuff)
+            return;
+        if(!player.isCrouching())
+            return;
+        if(!isDrone)
+            System.out.println(("Is not a drone"));
+        itemStack.getOrCreateTag().putInt("DRONE_ID",entity.getId());
+        if(event.getLevel().isClientSide()){
+            System.out.println(("EI: Client: id set "+entity.getId()));
         }else{
-            player.sendSystemMessage(Component.literal("Non è un drone"));
+            System.out.println(("EI: Server: id set "+entity.getId()));
         }
+
 
     }
     @SubscribeEvent
     public static void onRightClick(PlayerInteractEvent.RightClickItem event ){
-
-
         Player player = event.getEntity();
         ItemStack itemStack = player.getMainHandItem();
-        Item item = itemStack.getItem();
-        boolean isMainHand = event.getHand() == InteractionHand.MAIN_HAND;
-        boolean isClientSide = player.level().isClientSide();
-        boolean isDebugStuff = item instanceof DebugStuff;
-        if(isDebugStuff && !isSetNow) {
-            if (((DebugStuff) item).genericDrone == null)return;
-
-
-            if( isClientSide && isMainHand ){
-                System.out.println("Evento chiamato C"+isSetNow);
-
-                MyScreen screen = new MyScreen(((DebugStuff) item).genericDrone);
-                player.sendSystemMessage(Component.literal("Open GUI on "+((DebugStuff) item).genericDrone));
-
-                Minecraft.getInstance().setScreen(screen);
+        boolean isDebugStuff = itemStack.getItem() instanceof DebugStuff;
+        if(!isDebugStuff)
+            return;
+        if(player.isCrouching())
+            return;
+        int entity_id = itemStack.getOrCreateTag().getInt("DRONE_ID");
+        if(event.getLevel().isClientSide()){
+            System.out.println(("RE: Client: id set "+entity_id));
+            ClientLevel level = Minecraft.getInstance().level;
+            if (level == null){
+                System.out.println(("RE: Client: level nullo"));
+                return;
             }
-
-            if (!isClientSide){
-                System.out.println("Evento chiamato S"+isSetNow);
-
-
-//                NetworkHooks.openScreen((ServerPlayer) player,
-//                        new SimpleMenuProvider(
-//                                (containerId, playerInventory, player2) -> new MyMenu(containerId, playerInventory),
-//                                Component.translatable("menu.title.drone_mod.mymenu")),player.blockPosition());
-            }
+            Entity entity = level.getEntity(entity_id);
+            MyScreen screen = new MyScreen(entity_id, (GenericDrone) entity);
+            Minecraft.getInstance().setScreen(screen);
+        }else{
+            System.out.println(("RE: Server: id set "+entity_id));
         }
-        isSetNow = false;
     }
 
 
