@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class GenericDroneRendering extends MobRenderer<GenericDrone,GenericDroneModel> {
 
-    ResourceLocation TEXTURE = new ResourceLocation("texture/entity/generic_drone.png");
+    ResourceLocation TEXTURE = new ResourceLocation("textures/entities/generic_drone.png");
 
     public GenericDroneRendering(EntityRendererProvider.Context erpC) {
         super(erpC, new GenericDroneModel(erpC.bakeLayer(GenericDroneModel.MODEL_LAYER)), 0);
