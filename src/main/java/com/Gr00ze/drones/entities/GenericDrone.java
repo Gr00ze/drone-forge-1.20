@@ -1,32 +1,42 @@
 package com.Gr00ze.drones.entities;
 
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 
 import static com.Gr00ze.drones.entities.GenericDroneModel.motorRotations;
-
-public class GenericDrone extends Boat {
+@Mod.EventBusSubscriber(modid = "drone_mod", bus = Mod.EventBusSubscriber.Bus.FORGE)
+public class GenericDrone extends Mob{
 
     static final EntityDataAccessor<Float> sync = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT);
 
     public float weight = 2;
     public float lastTickTime = 0;
     static int MAX_HEALTH = 20;
-    protected GenericDrone(EntityType<? extends Boat> entityType, Level level) {
+    protected GenericDrone(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -53,7 +63,6 @@ public class GenericDrone extends Boat {
 
 
     }
-
     @Override
     public void tick() {
         super.tick();
@@ -100,6 +109,14 @@ public class GenericDrone extends Boat {
     }
 
     @Override
+    protected int calculateFallDamage(float p_21237_, float p_21238_) {
+        double fallDamage = this.getDeltaMovement().y;
+        System.out.println(this.getDeltaMovement().y);
+        System.out.println(fallDamage);
+        return (int)Math.abs(fallDamage);
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         float w1i = 0;
@@ -115,7 +132,27 @@ public class GenericDrone extends Boat {
         this.entityData.set(sync,w1);
     }
 
+    @SubscribeEvent
+    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event ){
+        Player player = event.getEntity();
+        Entity entity = event.getTarget();
+        ItemStack itemStack = player.getMainHandItem();
+        boolean isDrone = entity instanceof GenericDrone;
+        if (isDrone && itemStack.isEmpty()){
+            player.startRiding(entity);
+        }
+    }
+    @SubscribeEvent
+    public static void onWheelScroll(InputEvent.Key event){
+        Player player = Minecraft.getInstance().player;
+        System.out.println(event.getKey());
+        System.out.println(GLFW.GLFW_KEY_LEFT_CONTROL);
+        if (player == null) return;
+        Entity entity = player.getVehicle();
+        if (!(entity instanceof GenericDrone)) return;
+        System.out.println(entity);
 
+    }
 }
 
 
