@@ -33,7 +33,9 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Mod.EventBusSubscriber(modid = "drone_mod", bus = Mod.EventBusSubscriber.Bus.FORGE)
+import static com.Gr00ze.drones.DronesMod.MOD_ID;
+
+@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class DebugStuff extends Item {
     public Capability<Integer> ID_DRONE = CapabilityManager.get(new CapabilityToken<Integer>() {});
     private static boolean isSetNow = false;
@@ -84,8 +86,11 @@ public class DebugStuff extends Item {
                 return;
             }
             Entity entity = level.getEntity(entity_id);
-            MyScreen screen = new MyScreen(entity_id, (GenericDrone) entity);
-            Minecraft.getInstance().setScreen(screen);
+            if (entity instanceof GenericDrone genericDrone){
+                MyScreen screen = new MyScreen(entity_id, genericDrone);
+                Minecraft.getInstance().setScreen(screen);
+
+            }
         }else{
             System.out.println(("RE: Server: id set "+entity_id));
         }

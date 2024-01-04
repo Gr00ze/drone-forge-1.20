@@ -10,7 +10,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(DronesMod.MOD_ID)
 public class DronesMod {
-    public static final String MOD_ID = "drone_mod";
+    public static final String MOD_ID = "drones_mod";
 
 
     public DronesMod (){
