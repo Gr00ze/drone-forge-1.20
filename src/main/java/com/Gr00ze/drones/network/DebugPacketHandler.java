@@ -30,6 +30,13 @@ public class DebugPacketHandler {
                 DebugPacket::decode,
                 DebugPacket::handle
         );
+        CHANNEL.registerMessage(
+                id++,
+                PlayerControlsPacket.class,
+                PlayerControlsPacket::encode,
+                PlayerControlsPacket::decode,
+                PlayerControlsPacket::handle
+        );
     }
 
 }
