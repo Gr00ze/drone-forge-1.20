@@ -15,27 +15,31 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class DebugPacket {
-    private int entityId;
-    private int verticalSpeed;
-
-    public DebugPacket(int entityId, int verticalSpeed) {
+public class  DebugPacket {
+    private int
+            entityId,
+            rotorId,
+            verticalSpeed;
+    public DebugPacket(int entityId, int rotorId, int verticalSpeed) {
         this.entityId = entityId;
+        this.rotorId = rotorId;
         this.verticalSpeed = verticalSpeed;
     }
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(this.entityId);
+        buf.writeInt(this.rotorId);
         buf.writeInt(this.verticalSpeed);
         // Codifica altri campi del pacchetto se necessario
     }
 
     public static DebugPacket decode(FriendlyByteBuf buf) {
         int entityId = buf.readInt();
+        int rotorId = buf.readInt();
         int verticalSpeed = buf.readInt();
 
         // Decodifica altri campi del pacchetto se necessario
-        return new DebugPacket(entityId, verticalSpeed);
+        return new DebugPacket(entityId, rotorId, verticalSpeed);
     }
 
     public static void handle(DebugPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -50,9 +54,16 @@ public class DebugPacket {
                 ServerLevel world = sender.serverLevel(); // Ottieni il mondo in cui si trova il giocatore
                 Entity entity = world.getEntity(msg.getEntityId()); // Ottieni l'entità dal suo ID
 
-                if (entity != null) {
-                    GenericDrone genericDrone = (GenericDrone)entity;
-                    genericDrone.setW1(msg.getVerticalSpeed());
+                if (entity instanceof GenericDrone genericDrone) {
+                    switch (msg.getrotorId()){
+                        case 1: genericDrone.setW1(msg.getVerticalSpeed()); break;
+                        case 2: genericDrone.setW2(msg.getVerticalSpeed()); break;
+                        case 3: genericDrone.setW3(msg.getVerticalSpeed()); break;
+                        case 4: genericDrone.setW4(msg.getVerticalSpeed()); break;
+
+                    }
+
+
                 }
             }
 
@@ -63,7 +74,6 @@ public class DebugPacket {
         return verticalSpeed;
     }
 
-    public int getEntityId() {
-        return entityId;
-    }
+    public int getEntityId() {return entityId;}
+    public int getrotorId() {return rotorId;}
 }

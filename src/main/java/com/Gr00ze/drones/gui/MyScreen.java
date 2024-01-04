@@ -17,8 +17,7 @@ public class MyScreen extends Screen{
     private int genericDroneId;
     private GenericDrone genericDrone;
 
-    private GuiEventListener buttonDown;
-    private GuiEventListener buttonUp;
+
 
     //    public MyScreen(MyMenu menu, Inventory inv, Component title) {
 //        super(menu, inv, title);
@@ -39,14 +38,42 @@ public class MyScreen extends Screen{
     protected void init() {
         if (genericDrone != null){
 
-            this.buttonDown = addRenderableWidget(Button.builder(
+            addRenderableWidget(Button.builder(
                     Component.literal("+"),
-                    this::buttonUP).bounds(10,10,20,20).build()
+                    this::buttonUP1).bounds(10,10,20,20).build()
             );
-            this.buttonUp = addRenderableWidget(Button.builder(
+             addRenderableWidget(Button.builder(
                     Component.literal("-"),
-                    this::buttonDown).bounds(40,10,20,20).build()
+                    this::buttonDown1).bounds(40,10,20,20).build()
             );
+
+            addRenderableWidget(Button.builder(
+                    Component.literal("+"),
+                    this::buttonUP2).bounds(70,10,20,20).build()
+            );
+            addRenderableWidget(Button.builder(
+                    Component.literal("-"),
+                    this::buttonDown2).bounds(100,10,20,20).build()
+            );
+
+            addRenderableWidget(Button.builder(
+                    Component.literal("+"),
+                    this::buttonUP3).bounds(130,10,20,20).build()
+            );
+            addRenderableWidget(Button.builder(
+                    Component.literal("-"),
+                    this::buttonDown3).bounds(160,10,20,20).build()
+            );
+
+            addRenderableWidget(Button.builder(
+                    Component.literal("+"),
+                    this::buttonUP4).bounds(190,10,20,20).build()
+            );
+            addRenderableWidget(Button.builder(
+                    Component.literal("-"),
+                    this::buttonDown4).bounds(210,10,20,20).build()
+            );
+
 
         }else{
             EditBox ebox = new EditBox(this.font,1,1,20,20,Component.literal("SS"));
@@ -57,16 +84,55 @@ public class MyScreen extends Screen{
 
     }
 
-    public void buttonUP(Button button){
+    public void buttonUP1(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, (int) (this.genericDrone.getW1()+1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (int) (this.genericDrone.getW1()+1));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
-    public void buttonDown(Button button){
+    public void buttonDown1(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, (int) (this.genericDrone.getW1()-1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (int) (this.genericDrone.getW1()-1));
+        DebugPacketHandler.CHANNEL.sendToServer(packet);
+
+    }
+    public void buttonUP2(Button button){
+//        genericDrone.setW1(genericDrone.getW1() + 1);;
+//        System.out.println("WC= "+genericDrone.getW1());
+        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (int) (this.genericDrone.getW2()+1));
+        DebugPacketHandler.CHANNEL.sendToServer(packet);
+    }
+    public void buttonDown2(Button button){
+//        genericDrone.setW1(genericDrone.getW1() - 1);;
+//        System.out.println("WC= "+genericDrone.getW1());
+        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (int) (this.genericDrone.getW2()-1));
+        DebugPacketHandler.CHANNEL.sendToServer(packet);
+
+    }
+    public void buttonUP3(Button button){
+//        genericDrone.setW1(genericDrone.getW1() + 1);;
+//        System.out.println("WC= "+genericDrone.getW1());
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 3, (int) (this.genericDrone.getW3()+1));
+        DebugPacketHandler.CHANNEL.sendToServer(packet);
+    }
+    public void buttonDown3(Button button){
+//        genericDrone.setW1(genericDrone.getW1() - 1);;
+//        System.out.println("WC= "+genericDrone.getW1());
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 3, (int) (this.genericDrone.getW3()-1));
+        DebugPacketHandler.CHANNEL.sendToServer(packet);
+
+    }
+    public void buttonUP4(Button button){
+//        genericDrone.setW1(genericDrone.getW1() + 1);;
+//        System.out.println("WC= "+genericDrone.getW1());
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (int) (this.genericDrone.getW4()+1));
+        DebugPacketHandler.CHANNEL.sendToServer(packet);
+    }
+    public void buttonDown4(Button button){
+//        genericDrone.setW1(genericDrone.getW1() - 1);;
+//        System.out.println("WC= "+genericDrone.getW1());
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (int) (this.genericDrone.getW4()-1));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }

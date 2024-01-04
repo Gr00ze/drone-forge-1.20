@@ -1,41 +1,52 @@
 package com.Gr00ze.drones.entities;
 
 
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.vehicle.Minecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+
 
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
+import java.util.List;
 
-import static com.Gr00ze.drones.entities.GenericDroneModel.motorRotations;
-@Mod.EventBusSubscriber(modid = "drone_mod", bus = Mod.EventBusSubscriber.Bus.FORGE)
+import static com.Gr00ze.drones.DronesMod.MOD_ID;
+import static com.Gr00ze.drones.entities.GenericDroneModel.*;
+
+@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class GenericDrone extends Mob{
 
-    static final EntityDataAccessor<Float> sync = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT);
+    static final EntityDataAccessor<Float>
+             syncedAngularVelocity1 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedAngularVelocity2 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedAngularVelocity3 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedAngularVelocity4 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT);
 
     public float weight = 2;
     public float lastTickTime = 0;
     static int MAX_HEALTH = 20;
+    private boolean isAcceleratingY;
+
     protected GenericDrone(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
     }
@@ -43,8 +54,15 @@ public class GenericDrone extends Mob{
     @Override
     public void onAddedToWorld() {
         super.onAddedToWorld();
-        motorRotations.start(this.tickCount);
-        motorRotations.isStarted();
+        spinRotor1.start(this.tickCount);
+        spinRotor1.isStarted();
+        spinRotor2.start(this.tickCount);
+        spinRotor2.isStarted();
+        spinRotor3.start(this.tickCount);
+        spinRotor3.isStarted();
+        spinRotor4.start(this.tickCount);
+        spinRotor4.isStarted();
+
         System.out.println("added to world ");
     }
 
@@ -64,8 +82,26 @@ public class GenericDrone extends Mob{
 
     }
     @Override
+    public void push(@NotNull Entity entity) {
+//        if (entity instanceof Entity) {
+//            if (entity.getBoundingBox().minY < this.getBoundingBox().maxY) {
+//                super.push(entity);
+//            }
+//        } else if (entity.getBoundingBox().minY <= this.getBoundingBox().minY) {
+//            super.push(entity);
+//        }
+
+    }
+
+
+
+
+    @Override
     public void tick() {
         super.tick();
+
+
+
         float velocity = 0;
 
         long currentTickTime = this.tickCount; // Tempo attuale (tick corrente)
@@ -99,6 +135,15 @@ public class GenericDrone extends Mob{
                 this.getY()+height,
                 this.getZ()+width/2) );
 
+        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0.20000000298023224, -0.009999999776482582, 0.20000000298023224), EntitySelector.pushableBy(this));
+        if (!list.isEmpty()) {
+
+            for(int j = 0; j < list.size(); ++j) {
+                Entity entity = list.get(j);
+
+                entity.setPos(entity.getBlockX(),entity.getBlockY()+getBoundingBox().getYsize(),entity.getBlockZ());
+            }
+        }
 
     }
 
@@ -119,17 +164,38 @@ public class GenericDrone extends Mob{
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        float w1i = 0;
-        this.entityData.define(sync, w1i);
+        float initialAngularVelocity = 0;
+        this.entityData.define(syncedAngularVelocity1, initialAngularVelocity);
+        this.entityData.define(syncedAngularVelocity2, initialAngularVelocity);
+        this.entityData.define(syncedAngularVelocity3, initialAngularVelocity);
+        this.entityData.define(syncedAngularVelocity4, initialAngularVelocity);
 
     }
 
     public float getW1() {
-        return this.entityData.get(sync);
+        return this.entityData.get(syncedAngularVelocity1);
+    }
+    public float getW2() {
+        return this.entityData.get(syncedAngularVelocity2);
+    }
+    public float getW3() {
+        return this.entityData.get(syncedAngularVelocity3);
+    }
+    public float getW4() {
+        return this.entityData.get(syncedAngularVelocity4);
     }
 
     public void setW1(float w1) {
-        this.entityData.set(sync,w1);
+        this.entityData.set(syncedAngularVelocity1,w1);
+    }
+    public void setW2(float angularVelocity) {
+        this.entityData.set(syncedAngularVelocity2,angularVelocity);
+    }
+    public void setW3(float angularVelocity) {
+            this.entityData.set(syncedAngularVelocity3,angularVelocity);
+    }
+    public void setW4(float angularVelocity) {
+            this.entityData.set(syncedAngularVelocity4,angularVelocity);
     }
 
     @SubscribeEvent
@@ -142,17 +208,32 @@ public class GenericDrone extends Mob{
             player.startRiding(entity);
         }
     }
+
     @SubscribeEvent
-    public static void onWheelScroll(InputEvent.Key event){
+    public static void onLeftControlPress(InputEvent.Key event){
         Player player = Minecraft.getInstance().player;
-        System.out.println(event.getKey());
-        System.out.println(GLFW.GLFW_KEY_LEFT_CONTROL);
         if (player == null) return;
         Entity entity = player.getVehicle();
-        if (!(entity instanceof GenericDrone)) return;
-        System.out.println(entity);
+        if (!(entity instanceof GenericDrone genericDrone)) return;
 
+//        if (event.getKey() == GLFW.GLFW_KEY_LEFT_CONTROL) {
+//            DebugPacket packet = new DebugPacket(genericDrone.getId(), (int) (genericDrone.getW1() + 1));
+//            DebugPacketHandler.CHANNEL.sendToServer(packet);
+//        }
+//        if( GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS){
+//           System.out.println("Control premuto");
+//        }else if (GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) == 0){
+//           System.out.println("Control rilasciato");
+//            DebugPacket packet = new DebugPacket(genericDrone.getId(), 0);
+//            DebugPacketHandler.CHANNEL.sendToServer(packet);
+//        }
     }
+
+    public void isAcceleratingY(boolean isAcceleratingY) {
+        this.isAcceleratingY = isAcceleratingY;
+    }
+
+
 }
 
 
