@@ -1,1 +1,13 @@
-{}
+{
+  "parent": "item/generated",
+  "texture": {
+    "layer0": "items/debugstuff"
+  },
+  "display" : {
+    "thirdperson": {
+      "rotation": [0,90,-35],
+      "translation": [0,1.25,-3],
+      "scale": [0.375,0.375,0.375]
+    }
+  }
+}
