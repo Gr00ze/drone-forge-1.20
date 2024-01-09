@@ -1,6 +1,7 @@
 package com.Gr00ze.drones;
 
 import com.Gr00ze.drones.blocks.Blocks;
+import com.Gr00ze.drones.entities.EntityInit;
 import com.Gr00ze.drones.gui.MyMenu;
 import com.Gr00ze.drones.network.DebugPacketHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,7 +19,7 @@ public class DronesMod {
 
         IEventBus modEventbus = FMLJavaModLoadingContext.get().getModEventBus();
         Blocks.register(modEventbus);
-        com.Gr00ze.drones.entities.Init.register(modEventbus);
+        EntityInit.register(modEventbus);
         com.Gr00ze.drones.items.Init.register(modEventbus);
         MyMenu.register(modEventbus);
         DebugPacketHandler.init();

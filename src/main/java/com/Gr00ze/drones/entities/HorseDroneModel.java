@@ -2,29 +2,21 @@ package com.Gr00ze.drones.entities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.KeyframeAnimations;
-import net.minecraft.client.model.AnimationUtils;
-import net.minecraft.client.model.EntityModel;
-
-import net.minecraft.client.model.FrogModel;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 
 import static com.Gr00ze.drones.DronesMod.MOD_ID;
 
-public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
+public class HorseDroneModel<M extends Mob> extends HierarchicalModel<M> {
 
-    public static final ModelLayerLocation MODEL_LAYER = new ModelLayerLocation(new ResourceLocation(MOD_ID,"generic_drone_model"),"main");
+    public static final ModelLayerLocation MODEL_LAYER = new ModelLayerLocation(new ResourceLocation(MOD_ID,"horse_drone_model"),"main");
     private final ModelPart frame;
     private final ModelPart root;
     private final ModelPart controls;
@@ -32,7 +24,7 @@ public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
     private ModelPart motor1,motor2,motor3,motor4;
 
     public static AnimationState spinRotor1,spinRotor2,spinRotor3,spinRotor4;
-    public GenericDroneModel(ModelPart root) {
+    public HorseDroneModel(ModelPart root) {
         this.root = root;
         this.frame = root.getChild("frame");
         this.controls = frame.getChild("controls");
@@ -110,14 +102,8 @@ public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
         return LayerDefinition.create(meshdefinition, 256, 256);
     }
 
-    public void setupAnim(@NotNull M mob,  float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.root().getAllParts().forEach(ModelPart::resetPose);
-        if (mob instanceof GenericDrone genericDrone) {
-            this.animate(spinRotor1, GenericDroneAnimation.spinRotor1, ageInTicks * genericDrone.getW1());
-            this.animate(spinRotor2, GenericDroneAnimation.spinRotor2, ageInTicks * genericDrone.getW2());
-            this.animate(spinRotor3, GenericDroneAnimation.spinRotor3, ageInTicks * genericDrone.getW3());
-            this.animate(spinRotor4, GenericDroneAnimation.spinRotor4, ageInTicks * genericDrone.getW4());
-        }
+    public void setupAnim(@NotNull M mob, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.Gr00ze.drones.events;
 
 import com.Gr00ze.drones.entities.GenericDrone;
-import com.Gr00ze.drones.entities.Init;
+import com.Gr00ze.drones.entities.EntityInit;
+import com.Gr00ze.drones.entities.HorseDroneTest;
+import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,6 +14,7 @@ import static com.Gr00ze.drones.DronesMod.MOD_ID;
 public class CommonEvents {
     @SubscribeEvent
     public static void registerMobAttributes(EntityAttributeCreationEvent event){
-        event.put(Init.GENERIC_DRONE.get(),GenericDrone.getMobAttributes());
+        event.put(EntityInit.GENERIC_DRONE.get(),GenericDrone.getMobAttributes());
+        event.put(EntityInit.HORSE_DRONE.get(), HorseDroneTest.getMobAttributes());
     }
 }
