@@ -1,5 +1,6 @@
 package com.Gr00ze.drones.events;
 
+import com.Gr00ze.drones.entities.BoatDrone;
 import com.Gr00ze.drones.entities.GenericDrone;
 import com.Gr00ze.drones.entities.EntityInit;
 import com.Gr00ze.drones.entities.HorseDroneTest;
@@ -16,5 +17,6 @@ public class CommonEvents {
     public static void registerMobAttributes(EntityAttributeCreationEvent event){
         event.put(EntityInit.GENERIC_DRONE.get(),GenericDrone.getMobAttributes());
         event.put(EntityInit.HORSE_DRONE.get(), HorseDroneTest.getMobAttributes());
+        //event.put(EntityInit.BOAT_DRONE.get(), GenericDrone.getMobAttributes());
     }
 }

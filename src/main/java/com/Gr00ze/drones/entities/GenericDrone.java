@@ -7,10 +7,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -30,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.Gr00ze.drones.DronesMod.MOD_ID;
-import static com.Gr00ze.drones.entities.GenericDroneModel.*;
+import static com.Gr00ze.drones.client.GenericDroneModel.*;
 
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class GenericDrone extends Mob{
@@ -99,8 +96,44 @@ public class GenericDrone extends Mob{
     public void tick() {
         super.tick();
 
+        calculateVerticalSpeed();
+
+        calculateBoundingBox();
+
+        //calculateCollision();
 
 
+
+    }
+
+    private void calculateCollision() {
+        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0.20000000298023224, -0.009999999776482582, 0.20000000298023224), EntitySelector.pushableBy(this));
+        if (!list.isEmpty()) {
+
+            for(int j = 0; j < list.size(); ++j) {
+                Entity entity = list.get(j);
+                if (entity instanceof LivingEntity livingEntity && livingEntity.getControlledVehicle()==this)
+                    continue;
+                entity.setPos(entity.getBlockX(),entity.getBlockY()+getBoundingBox().getYsize(),entity.getBlockZ());
+            }
+        }
+    }
+
+    private void calculateBoundingBox() {
+        float width = 3;
+        float height = 1;
+
+        //rotation
+        this.setBoundingBox(new AABB(
+                this.getX()-width/2,
+                this.getY(),
+                this.getZ()-width/2,
+                this.getX()+width/2,
+                this.getY()+height,
+                this.getZ()+width/2) );
+    }
+
+    private void calculateVerticalSpeed() {
         float velocity = 0;
 
         long currentTickTime = this.tickCount; // Tempo attuale (tick corrente)
@@ -121,29 +154,6 @@ public class GenericDrone extends Mob{
 
         // Aggiorna il tempo dell'ultimo tick
         lastTickTime = currentTickTime;
-
-        float width = 3;
-        float height = 1;
-
-        //rotation
-        this.setBoundingBox(new AABB(
-                this.getX()-width/2,
-                this.getY(),
-                this.getZ()-width/2,
-                this.getX()+width/2,
-                this.getY()+height,
-                this.getZ()+width/2) );
-
-        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0.20000000298023224, -0.009999999776482582, 0.20000000298023224), EntitySelector.pushableBy(this));
-        if (!list.isEmpty()) {
-
-            for(int j = 0; j < list.size(); ++j) {
-                Entity entity = list.get(j);
-
-                entity.setPos(entity.getBlockX(),entity.getBlockY()+getBoundingBox().getYsize(),entity.getBlockZ());
-            }
-        }
-
     }
 
     public static AttributeSupplier getMobAttributes(){

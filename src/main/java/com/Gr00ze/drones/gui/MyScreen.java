@@ -17,6 +17,8 @@ public class MyScreen extends Screen{
     private int genericDroneId;
     private GenericDrone genericDrone;
 
+    public static float speedModifier = 0.078F;
+
 
 
     //    public MyScreen(MyMenu menu, Inventory inv, Component title) {
@@ -71,7 +73,7 @@ public class MyScreen extends Screen{
             );
             addRenderableWidget(Button.builder(
                     Component.literal("-"),
-                    this::buttonDown4).bounds(210,10,20,20).build()
+                    this::buttonDown4).bounds(220,10,20,20).build()
             );
 
 
@@ -87,52 +89,52 @@ public class MyScreen extends Screen{
     public void buttonUP1(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (int) (this.genericDrone.getW1()+1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (int) (this.genericDrone.getW1()+speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown1(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (int) (this.genericDrone.getW1()-1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (int) (this.genericDrone.getW1()-speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP2(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (int) (this.genericDrone.getW2()+1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (int) (this.genericDrone.getW2()+speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown2(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (int) (this.genericDrone.getW2()-1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (int) (this.genericDrone.getW2()-speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP3(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 3, (int) (this.genericDrone.getW3()+1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 3, (int) (this.genericDrone.getW3()+speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown3(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 3, (int) (this.genericDrone.getW3()-1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 3, (int) (this.genericDrone.getW3()-speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP4(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (int) (this.genericDrone.getW4()+1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (int) (this.genericDrone.getW4()+speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown4(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (int) (this.genericDrone.getW4()-1));
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (int) (this.genericDrone.getW4()-speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }

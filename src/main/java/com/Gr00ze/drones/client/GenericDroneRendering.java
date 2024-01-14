@@ -1,4 +1,4 @@
-package com.Gr00ze.drones.entities;
+package com.Gr00ze.drones.client;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

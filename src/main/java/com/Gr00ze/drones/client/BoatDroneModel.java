@@ -1,4 +1,4 @@
-package com.Gr00ze.drones.entities;
+package com.Gr00ze.drones.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,11 +18,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static com.Gr00ze.drones.DronesMod.MOD_ID;
-
-public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
+@OnlyIn(Dist.CLIENT)
+public class BoatDroneModel<E extends Entity> extends HierarchicalModel<E> {
 
     public static final ModelLayerLocation MODEL_LAYER = new ModelLayerLocation(new ResourceLocation(MOD_ID,"generic_drone_model"),"main");
     private final ModelPart frame;
@@ -32,7 +35,7 @@ public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
     private ModelPart motor1,motor2,motor3,motor4;
 
     public static AnimationState spinRotor1,spinRotor2,spinRotor3,spinRotor4;
-    public GenericDroneModel(ModelPart root) {
+    public BoatDroneModel(ModelPart root) {
         this.root = root;
         this.frame = root.getChild("frame");
         this.controls = frame.getChild("controls");
@@ -110,14 +113,9 @@ public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
         return LayerDefinition.create(meshdefinition, 256, 256);
     }
 
-    public void setupAnim(@NotNull M mob,  float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(@NotNull E entity,  float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
-        if (mob instanceof GenericDrone genericDrone) {
-            this.animate(spinRotor1, GenericDroneAnimation.spinRotor1, ageInTicks * genericDrone.getW1());
-            this.animate(spinRotor2, GenericDroneAnimation.spinRotor2, ageInTicks * genericDrone.getW2());
-            this.animate(spinRotor3, GenericDroneAnimation.spinRotor3, ageInTicks * genericDrone.getW3());
-            this.animate(spinRotor4, GenericDroneAnimation.spinRotor4, ageInTicks * genericDrone.getW4());
-        }
+
     }
 
     @Override

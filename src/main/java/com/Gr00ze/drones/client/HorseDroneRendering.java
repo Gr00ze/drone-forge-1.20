@@ -1,4 +1,4 @@
-package com.Gr00ze.drones.entities;
+package com.Gr00ze.drones.client;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.Gr00ze.drones.DronesMod.MOD_ID;
 
 @OnlyIn(Dist.CLIENT)
-public class HorseDroneRendering<M extends Mob> extends MobRenderer<M,GenericDroneModel<M>> {
+public class HorseDroneRendering<M extends Mob> extends MobRenderer<M, GenericDroneModel<M>> {
 
     ResourceLocation TEXTURE = new ResourceLocation(MOD_ID,"textures/entities/generic_drone.png");
 

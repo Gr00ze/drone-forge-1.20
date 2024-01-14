@@ -1,7 +1,6 @@
 package com.Gr00ze.drones.events;
 
-import com.Gr00ze.drones.entities.GenericDroneModel;
-import com.Gr00ze.drones.entities.*;
+import com.Gr00ze.drones.client.*;
 import com.Gr00ze.drones.entities.EntityInit;
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,12 +18,14 @@ public class ClientEvents {
     public static void registerRenderers (EntityRenderersEvent.RegisterRenderers event){
         event.registerEntityRenderer(EntityInit.GENERIC_DRONE.get(), GenericDroneRendering::new);
         event.registerEntityRenderer(EntityInit.HORSE_DRONE.get(), HorseDroneRendering::new);
+        event.registerEntityRenderer(EntityInit.BOAT_DRONE.get(), BoatDroneRendering::new);
     }
 
     @SubscribeEvent
     public static void registerModels (EntityRenderersEvent.RegisterLayerDefinitions event){
         event.registerLayerDefinition(GenericDroneModel.MODEL_LAYER, GenericDroneModel::createBodyLayer);
         event.registerLayerDefinition(HorseDroneModel.MODEL_LAYER, HorseDroneModel::createBodyLayer);
+        event.registerLayerDefinition(BoatDroneModel.MODEL_LAYER, BoatDroneModel::createBodyLayer);
     }
 
 }

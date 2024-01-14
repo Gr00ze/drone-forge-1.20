@@ -16,6 +16,7 @@ public class EntityInit {
 
     public static final ResourceLocation GENERIC_DRONE_RL = new ResourceLocation(MOD_ID,"generic_drone");
     public static final ResourceLocation HORSE_DRONE_RL = new ResourceLocation(MOD_ID,"horse_drone");
+    public static final ResourceLocation BOAT_DRONE_RL = new ResourceLocation(MOD_ID,"boat_drone");
     public static final RegistryObject<EntityType<GenericDrone>> GENERIC_DRONE = ENTITIES.register("generic_drone",
             () -> EntityType.Builder.of(GenericDrone::new, MobCategory.CREATURE)
                     .sized(3,1)
@@ -24,6 +25,11 @@ public class EntityInit {
     public static final RegistryObject<EntityType<HorseDroneTest>> HORSE_DRONE = ENTITIES.register("horse_drone",
             () -> EntityType.Builder.of(HorseDroneTest::new, MobCategory.CREATURE)
                     .build(HORSE_DRONE_RL.toString()));
+
+    public static final RegistryObject<EntityType<BoatDrone>> BOAT_DRONE = ENTITIES.register("boat_drone",
+            () -> EntityType.Builder.of(BoatDrone::new, MobCategory.CREATURE)
+                    .sized(3,1)
+                    .build(BOAT_DRONE_RL.toString()));
 
     public static void register(IEventBus iEventBus){
         ENTITIES.register(iEventBus);
