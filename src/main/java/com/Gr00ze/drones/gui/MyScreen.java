@@ -14,8 +14,8 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class MyScreen extends Screen{
-    private int genericDroneId;
-    private GenericDrone genericDrone;
+    private final int genericDroneId;
+    private final GenericDrone genericDrone;
 
     public static float speedModifier = 0.078F;
 
@@ -89,52 +89,52 @@ public class MyScreen extends Screen{
     public void buttonUP1(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (int) (this.genericDrone.getW1()+speedModifier));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (this.genericDrone.getW1()+speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown1(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (int) (this.genericDrone.getW1()-speedModifier));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (this.genericDrone.getW1()-speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP2(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (int) (this.genericDrone.getW2()+speedModifier));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (this.genericDrone.getW2()+speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown2(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (int) (this.genericDrone.getW2()-speedModifier));
+        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (this.genericDrone.getW2()-speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP3(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 3, (int) (this.genericDrone.getW3()+speedModifier));
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 3,  (this.genericDrone.getW3()+speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown3(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 3, (int) (this.genericDrone.getW3()-speedModifier));
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 3,  (this.genericDrone.getW3()-speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP4(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (int) (this.genericDrone.getW4()+speedModifier));
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (this.genericDrone.getW4()+speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown4(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (int) (this.genericDrone.getW4()-speedModifier));
+        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (this.genericDrone.getW4()-speedModifier));
         DebugPacketHandler.CHANNEL.sendToServer(packet);
 
     }

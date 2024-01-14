@@ -16,27 +16,28 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 public class  DebugPacket {
-    private int
+    private final int
             entityId,
-            rotorId,
-            verticalSpeed;
-    public DebugPacket(int entityId, int rotorId, int verticalSpeed) {
+            rotorId;
+    private final float rotorSpeed;
+    public DebugPacket(int entityId, int rotorId, float rotorSpeed) {
         this.entityId = entityId;
         this.rotorId = rotorId;
-        this.verticalSpeed = verticalSpeed;
+        this.rotorSpeed = rotorSpeed;
     }
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(this.entityId);
         buf.writeInt(this.rotorId);
-        buf.writeInt(this.verticalSpeed);
+        buf.writeFloat(this.rotorSpeed);
+        System.out.println("Mando: " + this.rotorSpeed);
         // Codifica altri campi del pacchetto se necessario
     }
 
     public static DebugPacket decode(FriendlyByteBuf buf) {
         int entityId = buf.readInt();
         int rotorId = buf.readInt();
-        int verticalSpeed = buf.readInt();
+        float verticalSpeed = buf.readFloat();
 
         // Decodifica altri campi del pacchetto se necessario
         return new DebugPacket(entityId, rotorId, verticalSpeed);
@@ -48,18 +49,18 @@ public class  DebugPacket {
             ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
             // Do stuff
             int entityId = msg.getEntityId();
-            int verticalSpeed = msg.getVerticalSpeed();
+            float verticalSpeed = msg.getRotorSpeed();
 
             if (sender != null) {
                 ServerLevel world = sender.serverLevel(); // Ottieni il mondo in cui si trova il giocatore
-                Entity entity = world.getEntity(msg.getEntityId()); // Ottieni l'entità dal suo ID
+                Entity entity = world.getEntity(entityId); // Ottieni l'entità dal suo ID
 
                 if (entity instanceof GenericDrone genericDrone) {
-                    switch (msg.getrotorId()){
-                        case 1: genericDrone.setW1(msg.getVerticalSpeed()); break;
-                        case 2: genericDrone.setW2(msg.getVerticalSpeed()); break;
-                        case 3: genericDrone.setW3(msg.getVerticalSpeed()); break;
-                        case 4: genericDrone.setW4(msg.getVerticalSpeed()); break;
+                    switch (msg.getRotorId()){
+                        case 1: genericDrone.setW1(verticalSpeed); break;
+                        case 2: genericDrone.setW2(verticalSpeed); break;
+                        case 3: genericDrone.setW3(verticalSpeed); break;
+                        case 4: genericDrone.setW4(verticalSpeed); break;
 
                     }
 
@@ -70,10 +71,10 @@ public class  DebugPacket {
         });
                 ctx.get().setPacketHandled(true);
     }
-    public int getVerticalSpeed() {
-        return verticalSpeed;
+    public float getRotorSpeed() {
+        return rotorSpeed;
     }
 
     public int getEntityId() {return entityId;}
-    public int getrotorId() {return rotorId;}
+    public int getRotorId() {return rotorId;}
 }

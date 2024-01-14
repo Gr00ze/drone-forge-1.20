@@ -195,6 +195,8 @@ public class GenericDrone extends Mob{
     }
 
     public void setW1(float w1) {
+        System.out.println("Arrivato");
+        System.out.println(w1);
         this.entityData.set(syncedAngularVelocity1,w1);
     }
     public void setW2(float angularVelocity) {
