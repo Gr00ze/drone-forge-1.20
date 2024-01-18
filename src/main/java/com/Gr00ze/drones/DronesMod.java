@@ -4,6 +4,7 @@ import com.Gr00ze.drones.blocks.Blocks;
 import com.Gr00ze.drones.entities.EntityInit;
 import com.Gr00ze.drones.gui.MyMenu;
 import com.Gr00ze.drones.network.DebugPacketHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
