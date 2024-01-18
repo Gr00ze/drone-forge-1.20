@@ -23,8 +23,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
 
 import static com.Gr00ze.drones.DronesMod.MOD_ID;
 import static com.Gr00ze.drones.client.GenericDroneModel.*;
@@ -102,8 +102,30 @@ public class GenericDrone extends Mob{
 
         //calculateCollision();
 
+        handlePassengers();
 
 
+
+    }
+
+    private void handlePassengers() {
+        List <Entity> passengers = this.getPassengers();
+        int size = passengers.size();
+        if (size == 0) return;
+        Entity rider = passengers.get(0);
+        if (rider instanceof Player playerRider){
+            //forward back movement
+            if (playerRider.zza != 0)
+                System.out.println("Player want move on Z: "+ playerRider.zza);
+
+            //right left movement
+            if (playerRider.xxa != 0)
+                playerRider.jumpFromGround();
+                System.out.println("Player want move on X: "+ playerRider.xxa);
+            this.setDeltaMovement(playerRider.xxa,0,playerRider.zza);
+
+
+        }
     }
 
     private void calculateCollision() {
