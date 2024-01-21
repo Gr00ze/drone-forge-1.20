@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 
@@ -23,6 +24,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
+
 import java.util.List;
 
 
@@ -36,12 +39,22 @@ public class GenericDrone extends Mob{
              syncedAngularVelocity1 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
              syncedAngularVelocity2 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
              syncedAngularVelocity3 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
-             syncedAngularVelocity4 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT);
+             syncedAngularVelocity4 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedSpeedRoll = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedSpeedYaw = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedSpeedPitch = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedPitchAngle = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedRollAngle = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
+             syncedYawAngle = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT);
+
 
     public float weight = 2;
     public float lastTickTime = 0;
     static int MAX_HEALTH = 20;
+
+    public float MAX_SPEED = 10;
     private boolean isAcceleratingY;
+    private float lastRollError = 0,rollErrorSum = 0.0F,lastPitchError = 0,pitchErrorSum = 0.0F;
 
     protected GenericDrone(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
@@ -58,6 +71,8 @@ public class GenericDrone extends Mob{
         spinRotor3.isStarted();
         spinRotor4.start(this.tickCount);
         spinRotor4.isStarted();
+//        yawState.start(this.tickCount);
+//        yawState.isStarted();
 
         System.out.println("added to world ");
     }
@@ -96,7 +111,7 @@ public class GenericDrone extends Mob{
     public void tick() {
         super.tick();
 
-        calculateVerticalSpeed();
+        calculatePhysic();
 
         calculateBoundingBox();
 
@@ -113,16 +128,59 @@ public class GenericDrone extends Mob{
         int size = passengers.size();
         if (size == 0) return;
         Entity rider = passengers.get(0);
-        if (rider instanceof Player playerRider){
+        if (rider instanceof Player playerRider && !playerRider.level().isClientSide()){
+
+            // Dichiarazione di rollErrorSum come variabile di istanza della classe o al contesto appropriato
+
+
+// ...
+
+// All'interno della funzione o del metodo
+            float Kp = 0.1F;  // Costante proporzionale
+            float Ki = 0.00000001F; // Costante integrale
+            float Kd = 0.5F;   // Costante derivativa
+
+            float targetRoll = 0.0F;  // Angolo desiderato di rollio
+            float rollError = targetRoll - this.getRollAngle();
+            rollErrorSum += rollError;
+            float rollErrorRate = rollError - lastRollError;
+
+            float targetPitch = 0.0F;  // Angolo desiderato di rollio
+            float pitchError = targetPitch - this.getPitchAngle();
+            pitchErrorSum += pitchError;
+            float pitchErrorRate = pitchError - lastPitchError;
+
+            float balancingFactorRoll = Kp * rollError + Ki * rollErrorSum + Kd * rollErrorRate;
+            float balancingFactorPitch = Kp * pitchError + Ki * pitchErrorSum + Kd * pitchErrorRate;
+
+            this.setW1(this.getW1() + balancingFactorRoll + balancingFactorPitch);
+            this.setW2(this.getW2() - balancingFactorRoll + balancingFactorPitch);
+            this.setW3(this.getW3() - balancingFactorRoll - balancingFactorPitch);
+            this.setW4(this.getW4() + balancingFactorRoll - balancingFactorPitch);
+
+            this.lastRollError = rollError;
+            this.lastPitchError = pitchError;
+
+
+
+
             //forward back movement
-            if (playerRider.zza != 0)
-                System.out.println("Player want move on Z: "+ playerRider.zza);
+
+                this.setW1(this.getW1() - playerRider.zza/20+ playerRider.xxa/20 ) ;
+                this.setW2(this.getW2() - playerRider.zza/20- playerRider.xxa/20 );
+                this.setW3(this.getW3() + playerRider.zza/20- playerRider.xxa/20 );
+                this.setW4(this.getW4() + playerRider.zza/20+ playerRider.xxa/20 );
+
 
             //right left movement
-            if (playerRider.xxa != 0)
-                playerRider.jumpFromGround();
-                System.out.println("Player want move on X: "+ playerRider.xxa);
-            this.setDeltaMovement(playerRider.xxa,0,playerRider.zza);
+
+
+
+            //actual structure
+            //2----1
+            //3----4
+
+
 
 
         }
@@ -155,28 +213,69 @@ public class GenericDrone extends Mob{
                 this.getZ()+width/2) );
     }
 
-    private void calculateVerticalSpeed() {
+    private void calculatePhysic() {
+
+        calculateRotationAngle();
         float velocity = 0;
 
         long currentTickTime = this.tickCount; // Tempo attuale (tick corrente)
         float deltaTime = (currentTickTime - lastTickTime) * 0.05f; // Conversione da tick a secondi (20 tick per secondo)
 
+
         // Calcola l'accelerazione verticale usando a = F / m
-        float verticalAcceleration = getW1() / weight;
+        float totalForce = getW1() + getW2() + getW3() + getW4(),
+        acceleration = totalForce/weight,
+        ax = acceleration * Mth.sin(this.getRollAngle()),
+        ay = acceleration * Mth.cos(this.getPitchAngle()) * Mth.cos(this.getRollAngle()),
+        az = acceleration * Mth.sin(-this.getPitchAngle()) ;
+        Vector3f v1 = this.getDeltaMovement().toVector3f();
+        float
+        v2x = ax * deltaTime + v1.x,
+        v2y = ay * deltaTime + v1.y,
+        v2z = az * deltaTime + v1.z;
+        System.out.println(ax+" a"+ay+" "+az);
+        System.out.println(v1.x+" v1"+v1.y+" "+v1.z);
+        System.out.println(v2x+" v2"+v2y+" "+v2z);
+        Vector3f v2 = new Vector3f(v2x,v2y,v2z);
+        this.setDeltaMovement(v2.x,v2.y,v2.z);
 
-        double verticalSpeed = this.getDeltaMovement().y();
-        // Calcola la nuova velocità verticale utilizzando Vf = Vo + at
-        float newVerticalSpeed = (float) ((verticalAcceleration * deltaTime) + verticalSpeed);
 
-        // Applica il movimento verticale in base alla nuova velocità
-        this.setDeltaMovement(this.getDeltaMovement().x(), newVerticalSpeed, this.getDeltaMovement().z());
 
-        // Aggiorna la velocità verticale iniziale per il prossimo tick
-        verticalSpeed = newVerticalSpeed;
+
+
+
+//        float verticalAcceleration = getW1()/weight;
+//        double verticalSpeed = this.getDeltaMovement().y();
+//        // Calcola la nuova velocità verticale utilizzando Vf = Vo + at
+//        float newVerticalSpeed = (float) ((verticalAcceleration * deltaTime) + verticalSpeed);
+//
+//        // Applica il movimento verticale in base alla nuova velocità
+//        this.setDeltaMovement(this.getDeltaMovement().x(), newVerticalSpeed, this.getDeltaMovement().z());
+//
+//        // Aggiorna la velocità verticale iniziale per il prossimo tick
+//        verticalSpeed = newVerticalSpeed;
 
         // Aggiorna il tempo dell'ultimo tick
         lastTickTime = currentTickTime;
     }
+
+    public void calculateRotationAngle(){
+        //actual structure
+        //2----1
+        //3----4
+        float w1 = getW1(), w2 = getW2(), w3 = getW3(), w4 = getW4();
+        float pitchSpeed = (( w2 + w1 ) - ( w3 + w4 )) ;
+        float rollSpeed = (( w1 + w4 ) - ( w2 + w3 )) ;
+        float yawSpeed = (( w1 + w3 ) - ( w2 + w4 ));
+        this.setYawAngle(this.getYawAngle() + yawSpeed / 40);
+        this.setRollAngle(this.getRollAngle() + rollSpeed / 40);
+        this.setPitchAngle(this.getPitchAngle() + pitchSpeed / 40);
+
+
+
+
+
+    };
 
     public static AttributeSupplier getMobAttributes(){
         return Mob.createMobAttributes()
@@ -195,11 +294,17 @@ public class GenericDrone extends Mob{
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        float initialAngularVelocity = 0;
-        this.entityData.define(syncedAngularVelocity1, initialAngularVelocity);
-        this.entityData.define(syncedAngularVelocity2, initialAngularVelocity);
-        this.entityData.define(syncedAngularVelocity3, initialAngularVelocity);
-        this.entityData.define(syncedAngularVelocity4, initialAngularVelocity);
+        float initialSpeed = 0, initialAngle = 0;
+        this.entityData.define(syncedAngularVelocity1, initialSpeed);
+        this.entityData.define(syncedAngularVelocity2, initialSpeed);
+        this.entityData.define(syncedAngularVelocity3, initialSpeed);
+        this.entityData.define(syncedAngularVelocity4, initialSpeed);
+        this.entityData.define(syncedSpeedRoll, initialSpeed);
+        this.entityData.define(syncedSpeedYaw, initialSpeed);
+        this.entityData.define(syncedSpeedPitch, initialSpeed);
+        this.entityData.define(syncedPitchAngle, initialAngle);
+        this.entityData.define(syncedRollAngle, initialAngle);
+        this.entityData.define(syncedYawAngle, initialAngle);
 
     }
 
@@ -215,21 +320,41 @@ public class GenericDrone extends Mob{
     public float getW4() {
         return this.entityData.get(syncedAngularVelocity4);
     }
+    public float getYawAngle(){
+        return this.entityData.get(syncedYawAngle);
+    }
+    public float getRollAngle(){
+        return this.entityData.get(syncedRollAngle);
+    }
+    public float getPitchAngle(){
+        return this.entityData.get(syncedPitchAngle);
+    }
 
-    public void setW1(float w1) {
-        System.out.println("Arrivato");
-        System.out.println(w1);
-        this.entityData.set(syncedAngularVelocity1,w1);
+    public void setW1(float angularVelocity) {
+        //System.out.println("Arrivato");
+        //System.out.println(angularVelocity);
+        this.entityData.set(syncedAngularVelocity1,angularVelocity > 0 ? angularVelocity < MAX_SPEED ? angularVelocity : 0 : 0);
     }
     public void setW2(float angularVelocity) {
-        this.entityData.set(syncedAngularVelocity2,angularVelocity);
+        this.entityData.set(syncedAngularVelocity2,angularVelocity > 0 ? angularVelocity < MAX_SPEED ? angularVelocity : 0  : 0);
     }
     public void setW3(float angularVelocity) {
-            this.entityData.set(syncedAngularVelocity3,angularVelocity);
+            this.entityData.set(syncedAngularVelocity3,angularVelocity > 0 ? angularVelocity < MAX_SPEED ? angularVelocity : 0  : 0);
     }
     public void setW4(float angularVelocity) {
-            this.entityData.set(syncedAngularVelocity4,angularVelocity);
+            this.entityData.set(syncedAngularVelocity4,angularVelocity > 0 ? angularVelocity < MAX_SPEED ? angularVelocity : 0  : 0);
     }
+
+    public void setYawAngle(float yawAngle){
+        this.entityData.set(syncedYawAngle,yawAngle);
+    }
+    public void setPitchAngle(float pitchAngle){
+        this.entityData.set(syncedPitchAngle,pitchAngle);
+    }
+    public void setRollAngle(float rollAngle){
+        this.entityData.set(syncedRollAngle,rollAngle);
+    }
+
 
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event ){

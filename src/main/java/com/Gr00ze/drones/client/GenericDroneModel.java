@@ -28,7 +28,7 @@ public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
     private final ModelPart chair;
     private ModelPart motor1,motor2,motor3,motor4;
 
-    public static AnimationState spinRotor1,spinRotor2,spinRotor3,spinRotor4;
+    public static AnimationState spinRotor1,spinRotor2,spinRotor3,spinRotor4, yawState;
     public GenericDroneModel(ModelPart root) {
         this.root = root;
         this.frame = root.getChild("frame");
@@ -114,6 +114,11 @@ public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
             this.animate(spinRotor2, GenericDroneAnimation.spinRotor2, ageInTicks * genericDrone.getW2());
             this.animate(spinRotor3, GenericDroneAnimation.spinRotor3, ageInTicks * genericDrone.getW3());
             this.animate(spinRotor4, GenericDroneAnimation.spinRotor4, ageInTicks * genericDrone.getW4());
+            //System.out.println(genericDrone.getYawAngle());
+            frame.yRot=genericDrone.getYawAngle();
+            frame.zRot=genericDrone.getRollAngle();
+            frame.xRot=-genericDrone.getPitchAngle();
+
         }
     }
 
