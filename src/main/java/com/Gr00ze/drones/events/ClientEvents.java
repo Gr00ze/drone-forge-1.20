@@ -19,6 +19,7 @@ public class ClientEvents {
         event.registerEntityRenderer(EntityInit.GENERIC_DRONE.get(), GenericDroneRendering::new);
         event.registerEntityRenderer(EntityInit.HORSE_DRONE.get(), HorseDroneRendering::new);
         event.registerEntityRenderer(EntityInit.BOAT_DRONE.get(), BoatDroneRendering::new);
+        event.registerEntityRenderer(EntityInit.ENTITY_DRONE.get(), EntityDroneRenderer::new);
     }
 
     @SubscribeEvent
