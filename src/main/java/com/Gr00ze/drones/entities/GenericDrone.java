@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -115,7 +116,7 @@ public class GenericDrone extends Mob{
 
         calculateBoundingBox();
 
-        //calculateCollision();
+        calculateCollision();
 
         handlePassengers();
 
@@ -123,19 +124,17 @@ public class GenericDrone extends Mob{
 
     }
 
+
+
     private void handlePassengers() {
         List <Entity> passengers = this.getPassengers();
         int size = passengers.size();
         if (size == 0) return;
         Entity rider = passengers.get(0);
         if (rider instanceof Player playerRider && !playerRider.level().isClientSide()){
+            System.out.println("playerRider.yya: "+playerRider.yya);
 
-            // Dichiarazione di rollErrorSum come variabile di istanza della classe o al contesto appropriato
 
-
-// ...
-
-// All'interno della funzione o del metodo
             float Kp = 0.1F;  // Costante proporzionale
             float Ki = 0.00000001F; // Costante integrale
             float Kd = 0.5F;   // Costante derivativa
@@ -166,10 +165,11 @@ public class GenericDrone extends Mob{
 
             //forward back movement
 
-                this.setW1(this.getW1() - playerRider.zza/20+ playerRider.xxa/20 ) ;
-                this.setW2(this.getW2() - playerRider.zza/20- playerRider.xxa/20 );
-                this.setW3(this.getW3() + playerRider.zza/20- playerRider.xxa/20 );
-                this.setW4(this.getW4() + playerRider.zza/20+ playerRider.xxa/20 );
+
+            this.setW1(this.getW1() - playerRider.zza/20+ playerRider.xxa/20 ) ;
+            this.setW2(this.getW2() - playerRider.zza/20- playerRider.xxa/20 );
+            this.setW3(this.getW3() + playerRider.zza/20- playerRider.xxa/20 );
+            this.setW4(this.getW4() + playerRider.zza/20+ playerRider.xxa/20 );
 
 
             //right left movement
@@ -187,14 +187,20 @@ public class GenericDrone extends Mob{
     }
 
     private void calculateCollision() {
-        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0.20000000298023224, -0.009999999776482582, 0.20000000298023224), EntitySelector.pushableBy(this));
+        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0, 0.2, 0));
         if (!list.isEmpty()) {
 
-            for(int j = 0; j < list.size(); ++j) {
-                Entity entity = list.get(j);
-                if (entity instanceof LivingEntity livingEntity && livingEntity.getControlledVehicle()==this)
-                    continue;
-                entity.setPos(entity.getBlockX(),entity.getBlockY()+getBoundingBox().getYsize(),entity.getBlockZ());
+            for (Entity collidingEntity : list) {
+                boolean isPassenger = false;
+                for (Entity passenger : this.getPassengers()) {
+                    isPassenger = passenger == collidingEntity;
+                }
+                if (isPassenger) continue;
+                Vec3 vec = collidingEntity.getDeltaMovement();
+                collidingEntity.setPos(collidingEntity.getX(),this.getY() + this.getBoundingBox().getYsize(),collidingEntity.getZ());
+                collidingEntity.setDeltaMovement(vec.x,vec.y < 0 ? 0 : vec.y,vec.z);
+                collidingEntity.resetFallDistance();
+                collidingEntity.setOnGround(true);
             }
         }
     }
@@ -233,9 +239,9 @@ public class GenericDrone extends Mob{
         v2x = ax * deltaTime + v1.x,
         v2y = ay * deltaTime + v1.y,
         v2z = az * deltaTime + v1.z;
-        System.out.println(ax+" a"+ay+" "+az);
-        System.out.println(v1.x+" v1"+v1.y+" "+v1.z);
-        System.out.println(v2x+" v2"+v2y+" "+v2z);
+//        System.out.println(ax+" a"+ay+" "+az);
+//        System.out.println(v1.x+" v1"+v1.y+" "+v1.z);
+//        System.out.println(v2x+" v2"+v2y+" "+v2z);
         Vector3f v2 = new Vector3f(v2x,v2y,v2z);
         this.setDeltaMovement(v2.x,v2.y,v2.z);
 
