@@ -1,10 +1,8 @@
 package com.Gr00ze.drones.events;
 
-import com.Gr00ze.drones.entities.BoatDrone;
 import com.Gr00ze.drones.entities.GenericDrone;
 import com.Gr00ze.drones.entities.EntityInit;
 import com.Gr00ze.drones.entities.HorseDroneTest;
-import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
