@@ -20,19 +20,23 @@ public class EntityInit {
     public static final RegistryObject<EntityType<GenericDrone>> GENERIC_DRONE = ENTITIES.register("generic_drone",
             () -> EntityType.Builder.of(GenericDrone::new, MobCategory.CREATURE)
                     .sized(3,1)
-                    .build(GENERIC_DRONE_RL.toString()));
+                    .build("generic_drone"));
 
     public static final RegistryObject<EntityType<HorseDroneTest>> HORSE_DRONE = ENTITIES.register("horse_drone",
             () -> EntityType.Builder.of(HorseDroneTest::new, MobCategory.CREATURE)
-                    .build(HORSE_DRONE_RL.toString()));
+                    .build("horse_drone"));
 
     public static final RegistryObject<EntityType<BoatDrone>> BOAT_DRONE = ENTITIES.register("boat_drone",
             () -> EntityType.Builder.of(BoatDrone::new, MobCategory.CREATURE)
                     .sized(3,1)
-                    .build(BOAT_DRONE_RL.toString()));
+                    .build("boat_drone"));
+
+    public static final RegistryObject<EntityType<EntityDrone>> ENTITY_DRONE = ENTITIES.register("entity_drone",
+            () -> EntityType.Builder.of(EntityDrone::new, MobCategory.MISC)
+                    .sized(3,1)
+                    .build("entity_drone"));
 
     public static void register(IEventBus iEventBus){
         ENTITIES.register(iEventBus);
-
     }
 }
