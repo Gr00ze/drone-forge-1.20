@@ -132,7 +132,7 @@ public class GenericDrone extends Mob{
         if (size == 0) return;
         Entity rider = passengers.get(0);
         if (rider instanceof Player playerRider && !playerRider.level().isClientSide()){
-            System.out.println("playerRider.yya: "+playerRider.yya);
+            //System.out.println("playerRider.yya: "+playerRider.yya);
 
 
             float Kp = 0.1F;  // Costante proporzionale

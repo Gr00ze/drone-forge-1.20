@@ -3,6 +3,8 @@ package com.Gr00ze.drones.events;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,5 +23,9 @@ public class ForgeEvents {
         if (isDrone && itemStack.isEmpty()){
             player.startRiding(entity);
         }
+    }
+    @SubscribeEvent
+    public static void onJumpPlayer(LivingEvent.LivingJumpEvent event){
+        System.out.println(event.getEntity().getName()+" sta saltando;");
     }
 }

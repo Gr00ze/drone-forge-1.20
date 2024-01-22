@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "drones_mod:item/texture_base"
-  }
-}

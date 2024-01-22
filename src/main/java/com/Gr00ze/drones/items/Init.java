@@ -12,7 +12,7 @@ public class Init {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS , MOD_ID);
 
     public static final RegistryObject<Item> DEBUG_STUFF = ITEMS.register(
-            "debug_stuff", DebugStuff::new
+            "controller", DebugStuff::new
     );
 
 
