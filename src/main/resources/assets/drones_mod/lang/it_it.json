@@ -1,3 +1,4 @@
 {
-  "menu.title.drone_mod.mymenu": "Il tuo testo per il titolo della GUI"
+  "menu.title.drone_mod.mymenu": "Il tuo testo per il titolo della GUI",
+  "item.drones_mod.controller": "Telecomando Drone"
 }
