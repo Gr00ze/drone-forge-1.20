@@ -1,14 +1,13 @@
 package com.Gr00ze.drones.gui;
 
 import com.Gr00ze.drones.entities.GenericDrone;
-import com.Gr00ze.drones.network.DebugPacket;
-import com.Gr00ze.drones.network.DebugPacketHandler;
+import com.Gr00ze.drones.network.ControllerPacket;
+import com.Gr00ze.drones.network.ControllerPacketHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
 import org.jetbrains.annotations.NotNull;
 
 public class MyScreen extends Screen{
@@ -42,8 +41,8 @@ public class MyScreen extends Screen{
             editBox1.setResponder(newText -> {
                 try {
                     float speed = Float.parseFloat(newText);
-                    DebugPacket packet = new DebugPacket(this.genericDroneId,1, speed);
-                    DebugPacketHandler.CHANNEL.sendToServer(packet);
+                    ControllerPacket packet = new ControllerPacket(this.genericDroneId,1, speed);
+                    ControllerPacketHandler.CHANNEL.sendToServer(packet);
                 }catch (NumberFormatException ignored){}
             });
             addRenderableWidget(editBox1);
@@ -53,8 +52,8 @@ public class MyScreen extends Screen{
             editBox2.setResponder(newText -> {
                 try {
                     float speed = Float.parseFloat(newText);
-                    DebugPacket packet = new DebugPacket(this.genericDroneId,2, speed);
-                    DebugPacketHandler.CHANNEL.sendToServer(packet);
+                    ControllerPacket packet = new ControllerPacket(this.genericDroneId,2, speed);
+                    ControllerPacketHandler.CHANNEL.sendToServer(packet);
                 }catch (NumberFormatException ignored){}
             });
 
@@ -65,8 +64,8 @@ public class MyScreen extends Screen{
             editBox3.setResponder(newText -> {
                 try {
                     float speed = Float.parseFloat(newText);
-                    DebugPacket packet = new DebugPacket(this.genericDroneId,3, speed);
-                    DebugPacketHandler.CHANNEL.sendToServer(packet);
+                    ControllerPacket packet = new ControllerPacket(this.genericDroneId,3, speed);
+                    ControllerPacketHandler.CHANNEL.sendToServer(packet);
                 }catch (NumberFormatException ignored){}
             });
             addRenderableWidget(editBox3);
@@ -76,8 +75,8 @@ public class MyScreen extends Screen{
             editBox4.setResponder(newText -> {
                 try {
                     float speed = Float.parseFloat(newText);
-                    DebugPacket packet = new DebugPacket(this.genericDroneId,4, speed);
-                    DebugPacketHandler.CHANNEL.sendToServer(packet);
+                    ControllerPacket packet = new ControllerPacket(this.genericDroneId,4, speed);
+                    ControllerPacketHandler.CHANNEL.sendToServer(packet);
                 }catch (NumberFormatException ignored){}
             });
             addRenderableWidget(editBox4);
@@ -139,79 +138,79 @@ public class MyScreen extends Screen{
     }
 
     private void buttonUpAll(Button button) {
-        DebugPacket
-        packet = new DebugPacket(this.genericDroneId,1, (this.genericDrone.getW1()+speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
-        packet = new DebugPacket(this.genericDroneId,2, (this.genericDrone.getW2()+speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
-        packet = new DebugPacket(this.genericDroneId,3, (this.genericDrone.getW3()+speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
-        packet = new DebugPacket(this.genericDroneId,4, (this.genericDrone.getW4()+speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket
+        packet = new ControllerPacket(this.genericDroneId,1, (this.genericDrone.getW1()+speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
+        packet = new ControllerPacket(this.genericDroneId,2, (this.genericDrone.getW2()+speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
+        packet = new ControllerPacket(this.genericDroneId,3, (this.genericDrone.getW3()+speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
+        packet = new ControllerPacket(this.genericDroneId,4, (this.genericDrone.getW4()+speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
     }
 
     private void buttonDownAll(Button button) {
-        DebugPacket
-                packet = new DebugPacket(this.genericDroneId,1, (this.genericDrone.getW1()-speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
-        packet = new DebugPacket(this.genericDroneId,2, (this.genericDrone.getW2()-speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
-        packet = new DebugPacket(this.genericDroneId,3, (this.genericDrone.getW3()-speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
-        packet = new DebugPacket(this.genericDroneId,4, (this.genericDrone.getW4()-speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket
+                packet = new ControllerPacket(this.genericDroneId,1, (this.genericDrone.getW1()-speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
+        packet = new ControllerPacket(this.genericDroneId,2, (this.genericDrone.getW2()-speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
+        packet = new ControllerPacket(this.genericDroneId,3, (this.genericDrone.getW3()-speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
+        packet = new ControllerPacket(this.genericDroneId,4, (this.genericDrone.getW4()-speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
     }
 
     public void buttonUP1(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (this.genericDrone.getW1()+speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket packet = new ControllerPacket(this.genericDroneId,1, (this.genericDrone.getW1()+speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown1(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,1, (this.genericDrone.getW1()-speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket packet = new ControllerPacket(this.genericDroneId,1, (this.genericDrone.getW1()-speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP2(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (this.genericDrone.getW2()+speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket packet = new ControllerPacket(this.genericDroneId,2, (this.genericDrone.getW2()+speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown2(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId,2, (this.genericDrone.getW2()-speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket packet = new ControllerPacket(this.genericDroneId,2, (this.genericDrone.getW2()-speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP3(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 3,  (this.genericDrone.getW3()+speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket packet = new ControllerPacket(this.genericDroneId, 3,  (this.genericDrone.getW3()+speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown3(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 3,  (this.genericDrone.getW3()-speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket packet = new ControllerPacket(this.genericDroneId, 3,  (this.genericDrone.getW3()-speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
 
     }
     public void buttonUP4(Button button){
 //        genericDrone.setW1(genericDrone.getW1() + 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (this.genericDrone.getW4()+speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket packet = new ControllerPacket(this.genericDroneId, 4, (this.genericDrone.getW4()+speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
     }
     public void buttonDown4(Button button){
 //        genericDrone.setW1(genericDrone.getW1() - 1);;
 //        System.out.println("WC= "+genericDrone.getW1());
-        DebugPacket packet = new DebugPacket(this.genericDroneId, 4, (this.genericDrone.getW4()-speedModifier));
-        DebugPacketHandler.CHANNEL.sendToServer(packet);
+        ControllerPacket packet = new ControllerPacket(this.genericDroneId, 4, (this.genericDrone.getW4()-speedModifier));
+        ControllerPacketHandler.CHANNEL.sendToServer(packet);
 
     }
 

@@ -1,26 +1,20 @@
 package com.Gr00ze.drones.network;
 
 import com.Gr00ze.drones.entities.GenericDrone;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.PacketDecoder;
-import net.minecraft.network.PacketEncoder;
-import net.minecraft.network.PacketListener;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public class  DebugPacket {
+public class ControllerPacket {
     private final int
             entityId,
             rotorId;
     private final float rotorSpeed;
-    public DebugPacket(int entityId, int rotorId, float rotorSpeed) {
+    public ControllerPacket(int entityId, int rotorId, float rotorSpeed) {
         this.entityId = entityId;
         this.rotorId = rotorId;
         this.rotorSpeed = rotorSpeed;
@@ -34,16 +28,16 @@ public class  DebugPacket {
         // Codifica altri campi del pacchetto se necessario
     }
 
-    public static DebugPacket decode(FriendlyByteBuf buf) {
+    public static ControllerPacket decode(FriendlyByteBuf buf) {
         int entityId = buf.readInt();
         int rotorId = buf.readInt();
         float verticalSpeed = buf.readFloat();
 
         // Decodifica altri campi del pacchetto se necessario
-        return new DebugPacket(entityId, rotorId, verticalSpeed);
+        return new ControllerPacket(entityId, rotorId, verticalSpeed);
     }
 
-    public static void handle(DebugPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(ControllerPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             // Work that needs to be thread-safe (most work)
             ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet

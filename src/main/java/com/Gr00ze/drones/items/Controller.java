@@ -1,25 +1,11 @@
 package com.Gr00ze.drones.items;
 
 import com.Gr00ze.drones.entities.GenericDrone;
-import com.Gr00ze.drones.gui.MyMenu;
 import com.Gr00ze.drones.gui.MyScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Panda;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,20 +15,17 @@ import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.Gr00ze.drones.DronesMod.MOD_ID;
 
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class DebugStuff extends Item {
+public class Controller extends Item {
     public Capability<Integer> ID_DRONE = CapabilityManager.get(new CapabilityToken<Integer>() {});
     private static boolean isSetNow = false;
     public GenericDrone genericDrone;
 
     private MyScreen screen;
-    public DebugStuff() {
+    public Controller() {
 
         super(new Item.Properties());
     }
@@ -52,7 +35,7 @@ public class DebugStuff extends Item {
         Entity entity = event.getTarget();
         ItemStack itemStack = player.getMainHandItem();
         boolean isDrone = entity instanceof GenericDrone;
-        boolean isDebugStuff = itemStack.getItem() instanceof DebugStuff;
+        boolean isDebugStuff = itemStack.getItem() instanceof Controller;
         if(!isDebugStuff)
             return;
         if(!player.isCrouching())
@@ -72,7 +55,7 @@ public class DebugStuff extends Item {
     public static void onRightClick(PlayerInteractEvent.RightClickItem event ){
         Player player = event.getEntity();
         ItemStack itemStack = player.getMainHandItem();
-        boolean isDebugStuff = itemStack.getItem() instanceof DebugStuff;
+        boolean isDebugStuff = itemStack.getItem() instanceof Controller;
         if(!isDebugStuff)
             return;
         if(player.isCrouching())
@@ -98,6 +81,6 @@ public class DebugStuff extends Item {
 
 
     public static void registerEvents() {
-        MinecraftForge.EVENT_BUS.register(DebugStuff.class);
+        MinecraftForge.EVENT_BUS.register(Controller.class);
     }
 }
