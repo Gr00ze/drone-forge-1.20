@@ -11,25 +11,25 @@ import java.util.function.Supplier;
 
 public class PlayerControlsPacket {
     private int entityId;
-    private boolean isAcceleratingY;
+    private boolean isJumpKeyPressed;
 
-    public PlayerControlsPacket(int entityId, boolean isAcceleratingY) {
+    public PlayerControlsPacket(int entityId, boolean isJumpKeyPressed) {
         this.entityId = entityId;
-        this.isAcceleratingY = isAcceleratingY;
+        this.isJumpKeyPressed = isJumpKeyPressed;
     }
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(this.entityId);
-        buf.writeBoolean(this.isAcceleratingY);
+        buf.writeBoolean(this.isJumpKeyPressed);
         // Codifica altri campi del pacchetto se necessario
     }
 
     public static PlayerControlsPacket decode(FriendlyByteBuf buf) {
         int entityId = buf.readInt();
-        boolean isAcceleratingY = buf.readBoolean();
+        boolean isJumpKeyPressed = buf.readBoolean();
 
         // Decodifica altri campi del pacchetto se necessario
-        return new PlayerControlsPacket(entityId, isAcceleratingY);
+        return new PlayerControlsPacket(entityId, isJumpKeyPressed);
     }
 
     public static void handle(PlayerControlsPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -38,7 +38,7 @@ public class PlayerControlsPacket {
             ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
             // Do stuff
             int entityId = msg.getEntityId();
-            boolean isAcceleratingY = msg.isAcceleratingY();
+            boolean isJumpKeyPressed = msg.isJumpKeyPressed();
 
             if (sender != null) {
                 ServerLevel world = sender.serverLevel(); // Ottieni il mondo in cui si trova il giocatore
@@ -46,15 +46,15 @@ public class PlayerControlsPacket {
 
                 if (entity != null) {
                     GenericDrone genericDrone = (GenericDrone)entity;
-                    genericDrone.isAcceleratingY(msg.isAcceleratingY);
+                    genericDrone.driverWantGoUp(msg.isJumpKeyPressed);
                 }
             }
 
         });
         ctx.get().setPacketHandled(true);
     }
-    public boolean isAcceleratingY() {
-        return isAcceleratingY;
+    public boolean isJumpKeyPressed() {
+        return isJumpKeyPressed;
     }
 
     public int getEntityId() {

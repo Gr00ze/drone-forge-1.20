@@ -50,11 +50,13 @@ public class GenericDrone extends Mob{
 
 
     public float weight = 2;
-    public float lastTickTime = 0;
+    public float lastTickTime = 0,
+            currentAltitude = (float) getY(),
+            lastAltitude = (float) getY();
     static int MAX_HEALTH = 20;
 
     public float MAX_SPEED = 10;
-    private boolean isAcceleratingY;
+    private boolean driverWantGoUp = false;
     private float lastRollError = 0,rollErrorSum = 0.0F,lastPitchError = 0,pitchErrorSum = 0.0F;
 
     protected GenericDrone(EntityType<? extends Mob> entityType, Level level) {
@@ -120,10 +122,15 @@ public class GenericDrone extends Mob{
 
         handlePassengers();
 
+        checkAltitude();
 
 
     }
 
+    private void checkAltitude() {
+        lastAltitude = currentAltitude;
+        currentAltitude = (float) this.getY();
+    }
 
 
     private void handlePassengers() {
@@ -133,6 +140,19 @@ public class GenericDrone extends Mob{
         Entity rider = passengers.get(0);
         if (rider instanceof Player playerRider && !playerRider.level().isClientSide()){
             //System.out.println("playerRider.yya: "+playerRider.yya);
+
+            if(driverWantGoUp){
+                this.addW1(0.1F);
+                this.addW2(0.1F);
+                this.addW3(0.1F);
+                this.addW4(0.1F);
+            }else{
+                this.addW1(this.lastAltitude > this.currentAltitude?0.1F: -0.1F);
+                this.addW2(this.lastAltitude > this.currentAltitude?0.1F: -0.1F);
+                this.addW3(this.lastAltitude > this.currentAltitude?0.1F: -0.1F);
+                this.addW4(this.lastAltitude > this.currentAltitude?0.1F: -0.1F);
+
+            }
 
 
             float Kp = 0.1F;  // Costante proporzionale
@@ -185,6 +205,8 @@ public class GenericDrone extends Mob{
 
         }
     }
+
+
 
     private void calculateCollision() {
         List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0, 0.2, 0));
@@ -350,7 +372,18 @@ public class GenericDrone extends Mob{
     public void setW4(float angularVelocity) {
             this.entityData.set(syncedAngularVelocity4,angularVelocity > 0 ? angularVelocity < MAX_SPEED ? angularVelocity : 0  : 0);
     }
-
+    private void addW1(float angularVelocity) {
+        this.setW1(this.getW1()+angularVelocity);
+    }
+    private void addW2(float angularVelocity) {
+        this.setW2(this.getW2()+angularVelocity);
+    }
+    private void addW3(float angularVelocity) {
+        this.setW3(this.getW3()+angularVelocity);
+    }
+    private void addW4(float angularVelocity) {
+        this.setW4(this.getW4()+angularVelocity);
+    }
     public void setYawAngle(float yawAngle){
         this.entityData.set(syncedYawAngle,yawAngle);
     }
@@ -393,8 +426,8 @@ public class GenericDrone extends Mob{
 //        }
     }
 
-    public void isAcceleratingY(boolean isAcceleratingY) {
-        this.isAcceleratingY = isAcceleratingY;
+    public void driverWantGoUp(boolean driverWantGoUp) {
+        this.driverWantGoUp = driverWantGoUp;
     }
 
 
