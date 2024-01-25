@@ -11,25 +11,28 @@ import java.util.function.Supplier;
 
 public class PlayerControlsPacket {
     private int entityId;
-    private boolean isJumpKeyPressed;
+    private final boolean isJumpKeyPressed,isDownKeyPressed;
 
-    public PlayerControlsPacket(int entityId, boolean isJumpKeyPressed) {
+    public PlayerControlsPacket(int entityId, boolean isJumpKeyPressed, boolean isDownKeyPressed) {
         this.entityId = entityId;
         this.isJumpKeyPressed = isJumpKeyPressed;
+        this.isDownKeyPressed = isDownKeyPressed;
     }
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(this.entityId);
         buf.writeBoolean(this.isJumpKeyPressed);
+        buf.writeBoolean(this.isDownKeyPressed);
         // Codifica altri campi del pacchetto se necessario
     }
 
     public static PlayerControlsPacket decode(FriendlyByteBuf buf) {
         int entityId = buf.readInt();
         boolean isJumpKeyPressed = buf.readBoolean();
+        boolean isDownKeyPressed = buf.readBoolean();
 
         // Decodifica altri campi del pacchetto se necessario
-        return new PlayerControlsPacket(entityId, isJumpKeyPressed);
+        return new PlayerControlsPacket(entityId, isJumpKeyPressed, isDownKeyPressed);
     }
 
     public static void handle(PlayerControlsPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -39,6 +42,7 @@ public class PlayerControlsPacket {
             // Do stuff
             int entityId = msg.getEntityId();
             boolean isJumpKeyPressed = msg.isJumpKeyPressed();
+            boolean isDownKeyPressed = msg.isDownKeyPressed();
 
             if (sender != null) {
                 ServerLevel world = sender.serverLevel(); // Ottieni il mondo in cui si trova il giocatore
@@ -46,7 +50,8 @@ public class PlayerControlsPacket {
 
                 if (entity != null) {
                     GenericDrone genericDrone = (GenericDrone)entity;
-                    genericDrone.driverWantGoUp(msg.isJumpKeyPressed);
+                    genericDrone.driverWantGoUp(isJumpKeyPressed);
+                    genericDrone.driverWantGoDown(isDownKeyPressed);
                 }
             }
 
@@ -55,6 +60,9 @@ public class PlayerControlsPacket {
     }
     public boolean isJumpKeyPressed() {
         return isJumpKeyPressed;
+    }
+    public boolean isDownKeyPressed() {
+        return isDownKeyPressed;
     }
 
     public int getEntityId() {

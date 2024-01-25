@@ -51,7 +51,8 @@ public class ForgeEvents {
         Entity vehicle = localPlayer.getVehicle();
         if (vehicle instanceof GenericDrone genericDrone){
             boolean pressedJump = event.getKey() == GLFW.GLFW_KEY_SPACE && event.getAction() > 0;
-            PlayerControlsPacket packet = new PlayerControlsPacket(genericDrone.getId(),pressedJump);
+            boolean pressedDownKey = event.getKey() == GLFW.GLFW_KEY_LEFT_CONTROL && event.getAction() > 0;
+            PlayerControlsPacket packet = new PlayerControlsPacket(genericDrone.getId(),pressedJump,pressedDownKey);
             ControllerPacketHandler.CHANNEL.sendToServer(packet);
         }
 
