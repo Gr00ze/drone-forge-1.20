@@ -3,6 +3,7 @@ package com.Gr00ze.drones.entities;
 
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -56,8 +57,12 @@ public class GenericDrone extends Mob{
     static int MAX_HEALTH = 20;
 
     public float MAX_SPEED = 10;
-    private boolean driverWantGoUp = false;
-    private float lastRollError = 0,rollErrorSum = 0.0F,lastPitchError = 0,pitchErrorSum = 0.0F;
+    private boolean driverWantGoUp = false,driverWantGoDown = false;
+    private float lastRollError = 0,rollErrorSum = 0.0F,
+            lastPitchError = 0,pitchErrorSum = 0.0F,
+            lastYawError = 0F,yawErrorSum = 0.0F;
+    private double trigonometricValue = 0;
+
 
     protected GenericDrone(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
@@ -116,6 +121,8 @@ public class GenericDrone extends Mob{
 
         calculatePhysic();
 
+        calculateStabilization();
+
         calculateBoundingBox();
 
         calculateCollision();
@@ -125,6 +132,41 @@ public class GenericDrone extends Mob{
         checkAltitude();
 
 
+    }
+
+    private void calculateStabilization() {
+        float Kp = 0.1F;  // Costante proporzionale
+        float Ki = 0.00000001F; // Costante integrale
+        float Kd = 0.5F;   // Costante derivativa
+
+        float targetRoll = 0.0F;  // Angolo desiderato di rollio
+        float rollError = targetRoll - this.getRollAngle();
+        rollErrorSum += rollError;
+        float rollErrorRate = rollError - lastRollError;
+
+        float targetPitch = 0.0F;  // Angolo desiderato di rollio
+        float pitchError = targetPitch - this.getPitchAngle();
+        pitchErrorSum += pitchError;
+        float pitchErrorRate = pitchError - lastPitchError;
+
+        float targetYaw = (float) this.getWantedYawAngle();  // Angolo desiderato di rollio
+        float yawError = targetYaw - this.getYawAngle();
+        yawErrorSum += yawError;
+        float yawErrorRate = yawError - lastYawError;
+
+
+        float balancingFactorYaw = Kp * yawError + Ki * yawErrorSum + Kd * yawErrorRate;
+        float balancingFactorRoll = Kp * rollError + Ki * rollErrorSum + Kd * rollErrorRate;
+        float balancingFactorPitch = Kp * pitchError + Ki * pitchErrorSum + Kd * pitchErrorRate;
+
+        this.setW1(this.getW1() + balancingFactorRoll + balancingFactorPitch + balancingFactorYaw);
+        this.setW2(this.getW2() - balancingFactorRoll + balancingFactorPitch - balancingFactorYaw);
+        this.setW3(this.getW3() - balancingFactorRoll - balancingFactorPitch + balancingFactorYaw);
+        this.setW4(this.getW4() + balancingFactorRoll - balancingFactorPitch - balancingFactorYaw);
+
+        this.lastRollError = rollError;
+        this.lastPitchError = pitchError;
+        this.lastYawError = yawError;
     }
 
     private void checkAltitude() {
@@ -140,45 +182,40 @@ public class GenericDrone extends Mob{
         Entity rider = passengers.get(0);
         if (rider instanceof Player playerRider && !playerRider.level().isClientSide()){
             //System.out.println("playerRider.yya: "+playerRider.yya);
+            float incrementSpeed = 0.01F;
 
+            this.setWantedYawAngle(rider.getYRot()*Mth.PI/180);
             if(driverWantGoUp){
-                this.addW1(0.1F);
-                this.addW2(0.1F);
-                this.addW3(0.1F);
-                this.addW4(0.1F);
-            }else{
-                this.addW1(this.lastAltitude > this.currentAltitude?0.1F: -0.1F);
-                this.addW2(this.lastAltitude > this.currentAltitude?0.1F: -0.1F);
-                this.addW3(this.lastAltitude > this.currentAltitude?0.1F: -0.1F);
-                this.addW4(this.lastAltitude > this.currentAltitude?0.1F: -0.1F);
+                this.addW1(incrementSpeed);
+                this.addW2(incrementSpeed);
+                this.addW4(incrementSpeed);
+                this.addW3(incrementSpeed);
+            }else if(driverWantGoDown) {
 
+                this.addW1(-incrementSpeed);
+                this.addW2(-incrementSpeed);
+                this.addW4(-incrementSpeed);
+                this.addW3(-incrementSpeed);
             }
+            //instant model rotation
+            //this.setYawAngle(rider.getYRot()*Mth.PI/180);
+
+            if (rider.getYRot() < this.getYawAngle()) {
+                //sx
+                this.addW1(-incrementSpeed);
+                this.addW2(+incrementSpeed);
+                this.addW3(-incrementSpeed);
+                this.addW4(+incrementSpeed);
+            }else if(rider.getYRot() > this.getYawAngle())
+                //dx
+                this.addW1(+incrementSpeed);
+                this.addW2(-incrementSpeed);
+                this.addW3(+incrementSpeed);
+                this.addW4(-incrementSpeed);
 
 
-            float Kp = 0.1F;  // Costante proporzionale
-            float Ki = 0.00000001F; // Costante integrale
-            float Kd = 0.5F;   // Costante derivativa
 
-            float targetRoll = 0.0F;  // Angolo desiderato di rollio
-            float rollError = targetRoll - this.getRollAngle();
-            rollErrorSum += rollError;
-            float rollErrorRate = rollError - lastRollError;
 
-            float targetPitch = 0.0F;  // Angolo desiderato di rollio
-            float pitchError = targetPitch - this.getPitchAngle();
-            pitchErrorSum += pitchError;
-            float pitchErrorRate = pitchError - lastPitchError;
-
-            float balancingFactorRoll = Kp * rollError + Ki * rollErrorSum + Kd * rollErrorRate;
-            float balancingFactorPitch = Kp * pitchError + Ki * pitchErrorSum + Kd * pitchErrorRate;
-
-            this.setW1(this.getW1() + balancingFactorRoll + balancingFactorPitch);
-            this.setW2(this.getW2() - balancingFactorRoll + balancingFactorPitch);
-            this.setW3(this.getW3() - balancingFactorRoll - balancingFactorPitch);
-            this.setW4(this.getW4() + balancingFactorRoll - balancingFactorPitch);
-
-            this.lastRollError = rollError;
-            this.lastPitchError = pitchError;
 
 
 
@@ -206,6 +243,12 @@ public class GenericDrone extends Mob{
         }
     }
 
+    private void setWantedYawAngle(double trigonometricValue) {
+        this.trigonometricValue = trigonometricValue;
+    }
+    private double getWantedYawAngle() {
+        return this.trigonometricValue;
+    }
 
 
     private void calculateCollision() {
@@ -244,18 +287,15 @@ public class GenericDrone extends Mob{
     private void calculatePhysic() {
 
         calculateRotationAngle();
-        float velocity = 0;
 
         long currentTickTime = this.tickCount; // Tempo attuale (tick corrente)
         float deltaTime = (currentTickTime - lastTickTime) * 0.05f; // Conversione da tick a secondi (20 tick per secondo)
 
-
-        // Calcola l'accelerazione verticale usando a = F / m
         float totalForce = getW1() + getW2() + getW3() + getW4(),
         acceleration = totalForce/weight,
-        ax = acceleration * Mth.sin(this.getRollAngle()),
+        ax = acceleration * Mth.sin(this.getRollAngle()) * Mth.sin(this.getYawAngle()),
         ay = acceleration * Mth.cos(this.getPitchAngle()) * Mth.cos(this.getRollAngle()),
-        az = acceleration * Mth.sin(-this.getPitchAngle()) ;
+        az = acceleration * (Mth.sin(-this.getPitchAngle()) * Mth.cos(this.getYawAngle()));
         Vector3f v1 = this.getDeltaMovement().toVector3f();
         float
         v2x = ax * deltaTime + v1.x,
@@ -267,23 +307,6 @@ public class GenericDrone extends Mob{
         Vector3f v2 = new Vector3f(v2x,v2y,v2z);
         this.setDeltaMovement(v2.x,v2.y,v2.z);
 
-
-
-
-
-
-//        float verticalAcceleration = getW1()/weight;
-//        double verticalSpeed = this.getDeltaMovement().y();
-//        // Calcola la nuova velocità verticale utilizzando Vf = Vo + at
-//        float newVerticalSpeed = (float) ((verticalAcceleration * deltaTime) + verticalSpeed);
-//
-//        // Applica il movimento verticale in base alla nuova velocità
-//        this.setDeltaMovement(this.getDeltaMovement().x(), newVerticalSpeed, this.getDeltaMovement().z());
-//
-//        // Aggiorna la velocità verticale iniziale per il prossimo tick
-//        verticalSpeed = newVerticalSpeed;
-
-        // Aggiorna il tempo dell'ultimo tick
         lastTickTime = currentTickTime;
     }
 
@@ -431,6 +454,9 @@ public class GenericDrone extends Mob{
     }
 
 
+    public void driverWantGoDown(boolean driverWantGoDown) {
+        this.driverWantGoDown = driverWantGoDown;
+    }
 }
 
 
