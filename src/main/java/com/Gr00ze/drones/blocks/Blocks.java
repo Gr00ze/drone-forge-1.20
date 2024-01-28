@@ -12,7 +12,7 @@ public class Blocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, DronesMod.MOD_ID);
 
     public static final RegistryObject<Block> TABLE_BLOCK = BLOCKS.register(
-            "example_block", DronesBlock::new);
+            "assembly_table", AssemblyTable::new);
 
 
     public static void register(IEventBus iEventBus){
