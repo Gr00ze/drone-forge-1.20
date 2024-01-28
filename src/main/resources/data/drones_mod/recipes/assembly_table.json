@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+
+  "ingredients": [
+    {"item": "minecraft:crafting_table"},
+    {"item": "drones_mod:frame"}
+  ],
+  "result": {
+    "item": "drones_mod:table_block",
+    "count": 1
+  }
+}

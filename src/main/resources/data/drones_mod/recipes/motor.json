@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HHH",
+    "CRC",
+    "CRC"
+  ],
+  "key": {
+    "H": {
+      "item": "minecraft:iron_bars"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+
+  },
+  "result": {
+    "item": "drones_mod:motor",
+    "count": 1
+  }
+}

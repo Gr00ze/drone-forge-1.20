@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "H H",
+    "HHH",
+    "H H"
+  ],
+  "key": {
+    "H": {
+      "item": "minecraft:iron_bars"
+    }
+
+  },
+  "result": {
+    "item": "drones_mod:frame",
+    "count": 2
+  }
+}
