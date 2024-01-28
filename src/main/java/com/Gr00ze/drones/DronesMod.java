@@ -3,6 +3,7 @@ package com.Gr00ze.drones;
 import com.Gr00ze.drones.blocks.Blocks;
 import com.Gr00ze.drones.entities.EntityInit;
 import com.Gr00ze.drones.gui.MyMenu;
+import com.Gr00ze.drones.items.DroneCreativeTab;
 import com.Gr00ze.drones.network.ControllerPacketHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -22,6 +23,7 @@ public class DronesMod {
         EntityInit.register(modEventbus);
         com.Gr00ze.drones.items.Init.register(modEventbus);
         MyMenu.register(modEventbus);
+        DroneCreativeTab.register(modEventbus);
         ControllerPacketHandler.init();
 
     }
