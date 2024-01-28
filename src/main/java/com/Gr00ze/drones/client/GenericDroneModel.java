@@ -18,6 +18,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static com.Gr00ze.drones.DronesMod.MOD_ID;
+import static com.Gr00ze.drones.entities.GenericDrone.*;
+
 @OnlyIn(Dist.CLIENT)
 public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
 
@@ -28,17 +30,14 @@ public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
     private final ModelPart chair;
     private ModelPart motor1,motor2,motor3,motor4;
 
-    public static AnimationState spinRotor1,spinRotor2,spinRotor3,spinRotor4, yawState;
+
     public GenericDroneModel(ModelPart root) {
         this.root = root;
         this.frame = root.getChild("frame");
         this.controls = frame.getChild("controls");
         this.chair = frame.getChild("chair");
 
-        spinRotor1 = new AnimationState();
-        spinRotor2 = new AnimationState();
-        spinRotor3 = new AnimationState();
-        spinRotor4 = new AnimationState();
+
 
 
     }
@@ -110,12 +109,12 @@ public class GenericDroneModel<M extends Mob> extends HierarchicalModel<M> {
     public void setupAnim(@NotNull M mob,  float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
         if (mob instanceof GenericDrone genericDrone) {
-            this.animate(spinRotor1, GenericDroneAnimation.spinRotor1, ageInTicks * genericDrone.getW1());
+            this.animate(spinRotor1, GenericDroneAnimation.spinRotor1, (float )(ageInTicks * (double) genericDrone.getW1()));
             this.animate(spinRotor2, GenericDroneAnimation.spinRotor2, ageInTicks * genericDrone.getW2());
             this.animate(spinRotor3, GenericDroneAnimation.spinRotor3, ageInTicks * genericDrone.getW3());
             this.animate(spinRotor4, GenericDroneAnimation.spinRotor4, ageInTicks * genericDrone.getW4());
             //System.out.println(genericDrone.getYawAngle());
-            frame.yRot=genericDrone.getYawAngle();
+//            frame.yRot=genericDrone.getYawAngle();
             frame.zRot=genericDrone.getRollAngle();
             frame.xRot=-genericDrone.getPitchAngle();
 
