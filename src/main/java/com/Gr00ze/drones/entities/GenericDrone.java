@@ -2,7 +2,10 @@ package com.Gr00ze.drones.entities;
 
 
 
+import com.Gr00ze.drones.gui.InfoScreen;
+import com.Gr00ze.drones.gui.MyScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,6 +29,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -36,7 +40,7 @@ import static com.Gr00ze.drones.client.GenericDroneModel.*;
 
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class GenericDrone extends Mob{
-
+    public static AnimationState spinRotor1,spinRotor2,spinRotor3,spinRotor4;
     static final EntityDataAccessor<Float>
              syncedAngularVelocity1 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
              syncedAngularVelocity2 = SynchedEntityData.defineId(GenericDrone.class, EntityDataSerializers.FLOAT),
@@ -56,11 +60,12 @@ public class GenericDrone extends Mob{
             lastAltitude = (float) getY();
     static int MAX_HEALTH = 20;
 
-    public float MAX_SPEED = 10;
+    public float MAX_SPEED = 5;
     private boolean driverWantGoUp = false,driverWantGoDown = false;
     private float lastRollError = 0,rollErrorSum = 0.0F,
             lastPitchError = 0,pitchErrorSum = 0.0F,
-            lastYawError = 0F,yawErrorSum = 0.0F;
+            lastYawError = 0F,yawErrorSum = 0.0F,
+            lastAltitudeError = 0F,altitudeErrorSum = 0.0F;
     private double trigonometricValue = 0;
 
 
@@ -71,16 +76,15 @@ public class GenericDrone extends Mob{
     @Override
     public void onAddedToWorld() {
         super.onAddedToWorld();
+
+        spinRotor1 = new AnimationState();
+        spinRotor2 = new AnimationState();
+        spinRotor3 = new AnimationState();
+        spinRotor4 = new AnimationState();
         spinRotor1.start(this.tickCount);
-        spinRotor1.isStarted();
         spinRotor2.start(this.tickCount);
-        spinRotor2.isStarted();
         spinRotor3.start(this.tickCount);
-        spinRotor3.isStarted();
         spinRotor4.start(this.tickCount);
-        spinRotor4.isStarted();
-//        yawState.start(this.tickCount);
-//        yawState.isStarted();
 
         System.out.println("added to world ");
     }
@@ -129,7 +133,7 @@ public class GenericDrone extends Mob{
 
         handlePassengers();
 
-        checkAltitude();
+
 
 
     }
@@ -139,20 +143,29 @@ public class GenericDrone extends Mob{
         float Ki = 0.00000001F; // Costante integrale
         float Kd = 0.5F;   // Costante derivativa
 
-        float targetRoll = 0.0F;  // Angolo desiderato di rollio
+        float targetRoll = 0.0F;
         float rollError = targetRoll - this.getRollAngle();
         rollErrorSum += rollError;
         float rollErrorRate = rollError - lastRollError;
 
-        float targetPitch = 0.0F;  // Angolo desiderato di rollio
+        float targetPitch = 0.0F;
         float pitchError = targetPitch - this.getPitchAngle();
         pitchErrorSum += pitchError;
         float pitchErrorRate = pitchError - lastPitchError;
 
-        float targetYaw = (float) this.getWantedYawAngle();  // Angolo desiderato di rollio
+        float targetYaw = (float) this.getWantedYawAngle();
         float yawError = targetYaw - this.getYawAngle();
+        if (Math.abs(yawError) > Math.PI) {
+            if (yawError > 0) {
+                yawError -= 2 * Mth.PI;
+            } else {
+                yawError += 2 * Mth.PI;
+            }
+        }
+
         yawErrorSum += yawError;
         float yawErrorRate = yawError - lastYawError;
+
 
 
         float balancingFactorYaw = Kp * yawError + Ki * yawErrorSum + Kd * yawErrorRate;
@@ -167,12 +180,22 @@ public class GenericDrone extends Mob{
         this.lastRollError = rollError;
         this.lastPitchError = pitchError;
         this.lastYawError = yawError;
-    }
 
-    private void checkAltitude() {
+        Kp = 0.01F;
+        Ki = 0.000001F;
+        Kd = 0.001F;   //
+        float altitudeError = currentAltitude - lastAltitude;
+        altitudeErrorSum += altitudeError;
+        float altitudeErrorRate = altitudeError - lastAltitudeError;
+        float balancingFactorAltitude = Kp * altitudeError + Ki * altitudeErrorSum + Kd * altitudeErrorRate;
+        this.setW1(this.getW1() - balancingFactorAltitude);
+        this.setW2(this.getW2() - balancingFactorAltitude);
+        this.setW3(this.getW3() - balancingFactorAltitude);
+        this.setW4(this.getW4() - balancingFactorAltitude);
         lastAltitude = currentAltitude;
         currentAltitude = (float) this.getY();
     }
+
 
 
     private void handlePassengers() {
@@ -199,39 +222,25 @@ public class GenericDrone extends Mob{
             }
             //instant model rotation
             //this.setYawAngle(rider.getYRot()*Mth.PI/180);
+            float degreesYawAngle = this.getYawAngle() * 180 / Mth.PI;
 
-            if (rider.getYRot() < this.getYawAngle()) {
+            if (rider.getYRot() % 360 - degreesYawAngle % 360 < 180) {
                 //sx
                 this.addW1(-incrementSpeed);
                 this.addW2(+incrementSpeed);
                 this.addW3(-incrementSpeed);
                 this.addW4(+incrementSpeed);
-            }else if(rider.getYRot() > this.getYawAngle())
-                //dx
+            }else {
                 this.addW1(+incrementSpeed);
                 this.addW2(-incrementSpeed);
                 this.addW3(+incrementSpeed);
                 this.addW4(-incrementSpeed);
-
-
-
-
-
-
-
-
-            //forward back movement
-
-
+            }
+            //forward back right left movement
             this.setW1(this.getW1() - playerRider.zza/20+ playerRider.xxa/20 ) ;
             this.setW2(this.getW2() - playerRider.zza/20- playerRider.xxa/20 );
             this.setW3(this.getW3() + playerRider.zza/20- playerRider.xxa/20 );
             this.setW4(this.getW4() + playerRider.zza/20+ playerRider.xxa/20 );
-
-
-            //right left movement
-
-
 
             //actual structure
             //2----1
@@ -244,7 +253,7 @@ public class GenericDrone extends Mob{
     }
 
     private void setWantedYawAngle(double trigonometricValue) {
-        this.trigonometricValue = trigonometricValue;
+        this.trigonometricValue = trigonometricValue % 360;
     }
     private double getWantedYawAngle() {
         return this.trigonometricValue;
@@ -293,9 +302,9 @@ public class GenericDrone extends Mob{
 
         float totalForce = getW1() + getW2() + getW3() + getW4(),
         acceleration = totalForce/weight,
-        ax = acceleration * Mth.sin(this.getRollAngle()) * Mth.sin(this.getYawAngle()),
+        ax = acceleration * (Mth.sin(this.getRollAngle()) * Mth.cos(this.getYawAngle()) + Mth.sin(this.getPitchAngle()) * Mth.sin(this.getYawAngle())),
         ay = acceleration * Mth.cos(this.getPitchAngle()) * Mth.cos(this.getRollAngle()),
-        az = acceleration * (Mth.sin(-this.getPitchAngle()) * Mth.cos(this.getYawAngle()));
+        az = acceleration * (Mth.sin(-this.getPitchAngle()) * Mth.cos(this.getYawAngle()) + Mth.sin(this.getRollAngle()) * Mth.sin(this.getYawAngle()));
         Vector3f v1 = this.getDeltaMovement().toVector3f();
         float
         v2x = ax * deltaTime + v1.x,
@@ -321,6 +330,11 @@ public class GenericDrone extends Mob{
         this.setYawAngle(this.getYawAngle() + yawSpeed / 40);
         this.setRollAngle(this.getRollAngle() + rollSpeed / 40);
         this.setPitchAngle(this.getPitchAngle() + pitchSpeed / 40);
+//        System.out.print("yaw :"+this.getYawAngle() * 180 / Mth.PI);
+//        System.out.print("roll :"+this.getRollAngle() * 180 / Mth.PI);
+//        System.out.println("pitch :"+this.getPitchAngle() * 180 / Mth.PI);
+
+        this.setYRot((this.getYawAngle() * 180 / Mth.PI));
 
 
 
@@ -423,31 +437,12 @@ public class GenericDrone extends Mob{
         Player player = event.getEntity();
         Entity entity = event.getTarget();
         ItemStack itemStack = player.getMainHandItem();
-        boolean isDrone = entity instanceof GenericDrone;
-        if (isDrone && itemStack.isEmpty()){
+        if (entity instanceof GenericDrone genericDrone && itemStack.isEmpty()){
             player.startRiding(entity);
+
         }
     }
 
-    @SubscribeEvent
-    public static void onLeftControlPress(InputEvent.Key event){
-        Player player = Minecraft.getInstance().player;
-        if (player == null) return;
-        Entity entity = player.getVehicle();
-        if (!(entity instanceof GenericDrone genericDrone)) return;
-
-//        if (event.getKey() == GLFW.GLFW_KEY_LEFT_CONTROL) {
-//            DebugPacket packet = new DebugPacket(genericDrone.getId(), (int) (genericDrone.getW1() + 1));
-//            DebugPacketHandler.CHANNEL.sendToServer(packet);
-//        }
-//        if( GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS){
-//           System.out.println("Control premuto");
-//        }else if (GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) == 0){
-//           System.out.println("Control rilasciato");
-//            DebugPacket packet = new DebugPacket(genericDrone.getId(), 0);
-//            DebugPacketHandler.CHANNEL.sendToServer(packet);
-//        }
-    }
 
     public void driverWantGoUp(boolean driverWantGoUp) {
         this.driverWantGoUp = driverWantGoUp;
