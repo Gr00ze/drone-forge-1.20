@@ -21,6 +21,7 @@ public class PlayerControlsPacket {
     }
 
     public void encode(FriendlyByteBuf buf) {
+        System.out.println("Encode: " + this.getClass());
         buf.writeInt(this.entityId);
         buf.writeBoolean(this.isJumpKeyPressed);
         buf.writeBoolean(this.isDownKeyPressed);
@@ -28,6 +29,7 @@ public class PlayerControlsPacket {
     }
 
     public static PlayerControlsPacket decode(FriendlyByteBuf buf) {
+        System.out.println("Decode: " + PlayerControlsPacket.class);
         int entityId = buf.readInt();
         boolean isJumpKeyPressed = buf.readBoolean();
         boolean isDownKeyPressed = buf.readBoolean();
