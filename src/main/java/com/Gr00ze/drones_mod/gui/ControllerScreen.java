@@ -58,6 +58,7 @@ public class ControllerScreen extends Screen{
                 }catch (NumberFormatException ignored){}
             });
 
+
             addRenderableWidget(editBox2);
 
             Component c3 = Component.literal("Motore 3s");
