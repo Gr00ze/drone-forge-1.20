@@ -2,7 +2,6 @@ package com.Gr00ze.drones_mod.gui;
 
 import com.Gr00ze.drones_mod.entities.GenericDrone;
 import com.Gr00ze.drones_mod.network.ControllerPacket;
-import com.Gr00ze.drones_mod.network.ControllerPacketHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.Gr00ze.drones_mod.network.ControllerPacketHandler.sendToServer;
 
-public class MyScreen extends Screen{
+public class ControllerScreen extends Screen{
     private final int genericDroneId;
     private final GenericDrone genericDrone;
 
@@ -23,7 +22,7 @@ public class MyScreen extends Screen{
     //    public MyScreen(MyMenu menu, Inventory inv, Component title) {
 //        super(menu, inv, title);
 //    }
-    public MyScreen(int genericDroneId, GenericDrone entity) {
+    public ControllerScreen(int genericDroneId, GenericDrone entity) {
         super(Component.literal("Titolo"));
         this.genericDroneId = genericDroneId;
         this.genericDrone = entity;
