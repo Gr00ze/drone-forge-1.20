@@ -2,26 +2,32 @@ package com.Gr00ze.drones_mod.gui;
 
 import com.Gr00ze.drones_mod.entities.GenericDrone;
 import com.Gr00ze.drones_mod.network.ControllerPacket;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
+
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.Gr00ze.drones_mod.network.ControllerPacketHandler.sendToServer;
 
-public class ControllerScreen extends Screen{
+public class ControllerScreen extends UtilityScreen{
     private final int genericDroneId;
     private final GenericDrone genericDrone;
 
-    public static float speedModifier = 0.078F;
+
+    public static float speedModifier = 0.078F * 5;
 
 
 
-    //    public MyScreen(MyMenu menu, Inventory inv, Component title) {
-//        super(menu, inv, title);
-//    }
     public ControllerScreen(int genericDroneId, GenericDrone entity) {
         super(Component.literal("Titolo"));
         this.genericDroneId = genericDroneId;
@@ -36,212 +42,112 @@ public class ControllerScreen extends Screen{
 
     @Override
     protected void init() {
-        if (genericDrone != null){
-            Component c = Component.literal("Motore 1");
-            EditBox editBox1 = new EditBox(this.font, 10, 40, 20, 20, c);
-            editBox1.setResponder(newText -> {
-                try {
-                    float speed = Float.parseFloat(newText);
-                    ControllerPacket packet = new ControllerPacket(this.genericDroneId,1, speed);
-                    sendToServer(packet);
-                }catch (NumberFormatException ignored){}
-            });
-            addRenderableWidget(editBox1);
-
-            Component c2 = Component.literal("Motore 2");
-            EditBox editBox2 = new EditBox(this.font, 40, 40, 20, 20, c);
-            editBox2.setResponder(newText -> {
-                try {
-                    float speed = Float.parseFloat(newText);
-                    ControllerPacket packet = new ControllerPacket(this.genericDroneId,2, speed);
-                    sendToServer(packet);
-                }catch (NumberFormatException ignored){}
-            });
-
-
-            addRenderableWidget(editBox2);
-
-            Component c3 = Component.literal("Motore 3s");
-            EditBox editBox3 = new EditBox(this.font, 80, 40, 20, 20, c);
-            editBox3.setResponder(newText -> {
-                try {
-                    float speed = Float.parseFloat(newText);
-                    ControllerPacket packet = new ControllerPacket(this.genericDroneId,3, speed);
-                    sendToServer(packet);
-                }catch (NumberFormatException ignored){}
-            });
-            addRenderableWidget(editBox3);
-
-            Component c4 = Component.literal("Motore 4");
-            EditBox editBox4 = new EditBox(this.font, 120, 40, 20, 20, c);
-            editBox4.setResponder(newText -> {
-                try {
-                    float speed = Float.parseFloat(newText);
-                    ControllerPacket packet = new ControllerPacket(this.genericDroneId,4, speed);
-                    sendToServer(packet);
-                }catch (NumberFormatException ignored){}
-            });
-            addRenderableWidget(editBox4);
-
-            addRenderableWidget(Button.builder(
-                    Component.literal("1+"),
-                    this::buttonUP1).bounds(10,10,20,20).build()
-            );
-             addRenderableWidget(Button.builder(
-                    Component.literal("1-"),
-                    this::buttonDown1).bounds(40,10,20,20).build()
-            );
-
-            addRenderableWidget(Button.builder(
-                    Component.literal("2+"),
-                    this::buttonUP2).bounds(70,10,20,20).build()
-            );
-            addRenderableWidget(Button.builder(
-                    Component.literal("2-"),
-                    this::buttonDown2).bounds(100,10,20,20).build()
-            );
-
-            addRenderableWidget(Button.builder(
-                    Component.literal("3+"),
-                    this::buttonUP3).bounds(130,10,20,20).build()
-            );
-            addRenderableWidget(Button.builder(
-                    Component.literal("3-"),
-                    this::buttonDown3).bounds(160,10,20,20).build()
-            );
-
-            addRenderableWidget(Button.builder(
-                    Component.literal("4+"),
-                    this::buttonUP4).bounds(190,10,20,20).build()
-            );
-            addRenderableWidget(Button.builder(
-                    Component.literal("4-"),
-                    this::buttonDown4).bounds(220,10,20,20).build()
-            );
-            addRenderableWidget(Button.builder(
-                    Component.literal("A+"),
-                    this::buttonUpAll).bounds(250,10,20,20).build()
-            );
-            addRenderableWidget(Button.builder(
-                    Component.literal("A-"),
-                    this::buttonDownAll).bounds(280,10,20,20).build()
-            );
-
-
-
-
-        }else{
-            EditBox ebox = new EditBox(this.font,1,1,20,20,Component.literal("SS"));
-
-            addRenderableWidget(ebox);
-        }
         super.init();
+        int offsetY = 0;
+
+        Dimension genericButtonDimension = new Dimension(61, 15);
+        if (genericDrone == null){return;}
+        for (int i = 0; i < 4; i++) {
+            Point buttonPositionUp = new Point(width - 2 * genericButtonDimension.width,  offsetY);
+            offsetY += genericButtonDimension.height;
+            Point buttonPositionDown = new Point(width - genericButtonDimension.width , buttonPositionUp.y);
+
+            int finalI = i;
+            addButton("Up"+ (i + 1), button -> adjustMotors(new int[]{finalI},true), buttonPositionUp, genericButtonDimension, null);
+
+            addButton("Down"+ (i + 1), button -> adjustMotors(new int[]{finalI},false), buttonPositionDown, genericButtonDimension, null);
+        }
+
+
+
+        Point allMotorsButtonPosition = new Point(width - 2 * genericButtonDimension.width, offsetY += 2);
+        offsetY += 2;
+        Point allMotorsButtonPositionDown = new Point(allMotorsButtonPosition.x + genericButtonDimension.width , allMotorsButtonPosition.y);
+
+
+        // Logica per aumentare la velocità di tutti i motori contemporaneamente
+        addButton("AllUp", button -> adjustMotors(new int[]{1,2,3,4},true), allMotorsButtonPosition, genericButtonDimension, null);
+
+        // Logica per diminuire la velocità di tutti i motori contemporaneamente
+        addButton("AllDown", button -> adjustMotors(new int[]{1,2,3,4},false), allMotorsButtonPositionDown, genericButtonDimension, null);
+
+        Map<String, int[][]> angleMotorMap = new HashMap<>();
+        angleMotorMap.put("Pitch", new int[][]{{1, 2}, {3, 4}});
+        angleMotorMap.put("Yaw", new int[][]{{1, 3}, {2, 4}});
+        angleMotorMap.put("Roll", new int[][]{{1, 4}, {2, 3}});
+
+        for (Map.Entry<String, int[][]> entry : angleMotorMap.entrySet()) {
+            String rotationName = entry.getKey();
+            int[][] motorPairs = entry.getValue();
+
+            Point angleButtonPositionUp = new Point(width - 2 * genericButtonDimension.width , offsetY += genericButtonDimension.height);
+            Point angleButtonPositionDown = new Point(angleButtonPositionUp.x + genericButtonDimension.width, angleButtonPositionUp.y);
+            addButton(rotationName + "Up", button -> {
+                adjustMotors(motorPairs[0], true);
+                adjustMotors(motorPairs[1], false);
+            }, angleButtonPositionUp, genericButtonDimension, null);
+
+            addButton(rotationName + "Down", button -> {
+                adjustMotors(motorPairs[0], false);
+                adjustMotors(motorPairs[1], true);
+            }, angleButtonPositionDown, genericButtonDimension, null);
+        }
+    }
+
+    public void adjustMotors(int[] motorIds, boolean positiveFactor){
+        int factor_unit = positiveFactor ? 1 : - 1;
+        for (int motorId : motorIds){
+            float actualSpeed;
+            switch (motorId){
+                case 1: actualSpeed = this.genericDrone.getW1();break;
+                case 2: actualSpeed = this.genericDrone.getW2();break;
+                case 3: actualSpeed = this.genericDrone.getW3();break;
+                case 4: actualSpeed = this.genericDrone.getW4();break;
+                default: return;
+            }
+            ControllerPacket packet = new ControllerPacket(this.genericDroneId,motorId, actualSpeed + speedModifier * factor_unit);
+            sendToServer(packet);
+        }
 
     }
 
-    private void buttonUpAll(Button button) {
-        ControllerPacket
-        packet = new ControllerPacket(this.genericDroneId,1, (this.genericDrone.getW1()+speedModifier));
-        sendToServer(packet);
-        packet = new ControllerPacket(this.genericDroneId,2, (this.genericDrone.getW2()+speedModifier));
-        sendToServer(packet);
-        packet = new ControllerPacket(this.genericDroneId,3, (this.genericDrone.getW3()+speedModifier));
-        sendToServer(packet);
-        packet = new ControllerPacket(this.genericDroneId,4, (this.genericDrone.getW4()+speedModifier));
-        sendToServer(packet);
-    }
 
-    private void buttonDownAll(Button button) {
-        ControllerPacket
-                packet = new ControllerPacket(this.genericDroneId,1, (this.genericDrone.getW1()-speedModifier));
-        sendToServer(packet);
-        packet = new ControllerPacket(this.genericDroneId,2, (this.genericDrone.getW2()-speedModifier));
-        sendToServer(packet);
-        packet = new ControllerPacket(this.genericDroneId,3, (this.genericDrone.getW3()-speedModifier));
-        sendToServer(packet);
-        packet = new ControllerPacket(this.genericDroneId,4, (this.genericDrone.getW4()-speedModifier));
-        sendToServer(packet);
-    }
-
-    public void buttonUP1(Button button){
-//        genericDrone.setW1(genericDrone.getW1() + 1);;
-//        System.out.println("WC= "+genericDrone.getW1());
-        ControllerPacket packet = new ControllerPacket(this.genericDroneId,1, (this.genericDrone.getW1()+speedModifier));
-        sendToServer(packet);
-    }
-    public void buttonDown1(Button button){
-//        genericDrone.setW1(genericDrone.getW1() - 1);;
-//        System.out.println("WC= "+genericDrone.getW1());
-        ControllerPacket packet = new ControllerPacket(this.genericDroneId,1, (this.genericDrone.getW1()-speedModifier));
-        sendToServer(packet);
-
-    }
-    public void buttonUP2(Button button){
-//        genericDrone.setW1(genericDrone.getW1() + 1);;
-//        System.out.println("WC= "+genericDrone.getW1());
-        ControllerPacket packet = new ControllerPacket(this.genericDroneId,2, (this.genericDrone.getW2()+speedModifier));
-        sendToServer(packet);
-    }
-    public void buttonDown2(Button button){
-//        genericDrone.setW1(genericDrone.getW1() - 1);;
-//        System.out.println("WC= "+genericDrone.getW1());
-        ControllerPacket packet = new ControllerPacket(this.genericDroneId,2, (this.genericDrone.getW2()-speedModifier));
-        sendToServer(packet);
-
-    }
-    public void buttonUP3(Button button){
-//        genericDrone.setW1(genericDrone.getW1() + 1);;
-//        System.out.println("WC= "+genericDrone.getW1());
-        ControllerPacket packet = new ControllerPacket(this.genericDroneId, 3,  (this.genericDrone.getW3()+speedModifier));
-        sendToServer(packet);
-    }
-    public void buttonDown3(Button button){
-//        genericDrone.setW1(genericDrone.getW1() - 1);;
-//        System.out.println("WC= "+genericDrone.getW1());
-        ControllerPacket packet = new ControllerPacket(this.genericDroneId, 3,  (this.genericDrone.getW3()-speedModifier));
-        sendToServer(packet);
-
-    }
-    public void buttonUP4(Button button){
-//        genericDrone.setW1(genericDrone.getW1() + 1);;
-//        System.out.println("WC= "+genericDrone.getW1());
-        ControllerPacket packet = new ControllerPacket(this.genericDroneId, 4, (this.genericDrone.getW4()+speedModifier));
-        sendToServer(packet);
-    }
-    public void buttonDown4(Button button){
-//        genericDrone.setW1(genericDrone.getW1() - 1);;
-//        System.out.println("WC= "+genericDrone.getW1());
-        ControllerPacket packet = new ControllerPacket(this.genericDroneId, 4, (this.genericDrone.getW4()-speedModifier));
-        sendToServer(packet);
-
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        // Add ticking logic for EditBox in editBox
-        //this.editBox.tick();
-    }
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        //this.renderBackground(graphics);
-        graphics.fillGradient(2,2,200,200,0xFF00FF,0xFF0000);
-        // Render things here before widgets (background textures)
-        if(genericDrone==null) {
+        //renderBackground(graphics, mouseX, mouseY, partialTicks);
 
+        // Disegna il rettangolo con gradiente
+        graphics.fillGradient(2, 2, 200, 200, 0xFF00FF, 0xFF0000);
 
-            graphics.drawString(this.font, "NO DRONE SET", width / 2, height / 2, 0xFFFFFF);
-        }else{
-            String text = String.format("p: %f \n r: %f \n y: %f", genericDrone.getPitchAngle(),genericDrone.getRollAngle(),genericDrone.getYawAngle());
-            graphics.drawString(this.font, text , 5, 60, 0xFFFFFF);
+        // Verifica se genericDrone è null
+        if (genericDrone == null) {
+            // Disegna il testo "NO DRONE SET"
+            graphics.drawString(font, "NO DRONE SET", width / 2, height / 2, 0xFFFFFF);
+        } else {
+            int offsetY = 5;
+            // Suggerimenti di velocità e angoli
+            Vec3 speed = genericDrone.getDeltaMovement();
+            String speedHint = String.format("Speed: x:%f y:%f z:%f", speed.x, speed.y, speed.z);
+            String pitchHint = String.format("Pitch: %.2f", genericDrone.getPitchAngle());
+            String rollHint = String.format("Roll: %.2f", genericDrone.getRollAngle());
+            String yawHint = String.format("Yaw: %.2f", genericDrone.getYawAngle());
+
+            graphics.drawString(font, speedHint, 5, offsetY, 0xFFFFFF);
+            graphics.drawString(font, pitchHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
+            graphics.drawString(font, rollHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
+            graphics.drawString(font, yawHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
         }
-        // Then the widgets if this is a direct child of the Screen
-        super.render(graphics, mouseX, mouseY, partialTicks);
+
+        // Itera attraverso gli elementi renderabili presenti nella GUI
+        for (Renderable renderable : this.renderables) {
+            renderable.render(graphics, mouseX, mouseY, partialTicks);
+        }
+
     }
 
     @Override
     public boolean isPauseScreen() {
         return false;
     }
+
 }

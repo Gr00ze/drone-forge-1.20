@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -70,6 +71,11 @@ public class ForgeClientEvents {
         };
         ////////////////////////////////////////
 
+    }
+
+    @SubscribeEvent
+    public static void onRenderGameOverlay(RenderGuiEvent event) {
+        event.getGuiGraphics().drawString(Minecraft.getInstance().font,"GRANDE",0,0,0xFFFFFF);
     }
 
 

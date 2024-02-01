@@ -3,8 +3,10 @@ package com.Gr00ze.drones_mod.events;
 import com.Gr00ze.drones_mod.client.*;
 import com.Gr00ze.drones_mod.entities.EntityInit;
 
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -28,6 +30,8 @@ public class ClientEvents {
         event.registerLayerDefinition(HorseDroneModel.MODEL_LAYER, HorseDroneModel::createBodyLayer);
         event.registerLayerDefinition(BoatDroneModel.MODEL_LAYER, BoatDroneModel::createBodyLayer);
     }
+
+
 
 
 

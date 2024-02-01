@@ -2,6 +2,7 @@ package com.Gr00ze.drones_mod.entities;
 
 
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -57,7 +58,7 @@ public class GenericDrone extends Mob{
     private float lastRollError = 0,rollErrorSum = 0.0F,
             lastPitchError = 0,pitchErrorSum = 0.0F,
             lastYawError = 0F,yawErrorSum = 0.0F,
-            lastAltitudeError = 0F,altitudeErrorSum = 0.0F;
+            lastAltitudeError = 0F, altitudeErrorSum = 0.0F;
     private double trigonometricValue = 0;
 
 
