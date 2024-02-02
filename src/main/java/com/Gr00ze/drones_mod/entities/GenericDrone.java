@@ -357,9 +357,6 @@ public class GenericDrone extends Mob{
         this.entityData.define(syncedAngularVelocity2, initialSpeed);
         this.entityData.define(syncedAngularVelocity3, initialSpeed);
         this.entityData.define(syncedAngularVelocity4, initialSpeed);
-        this.entityData.define(syncedSpeedRoll, initialSpeed);
-        this.entityData.define(syncedSpeedYaw, initialSpeed);
-        this.entityData.define(syncedSpeedPitch, initialSpeed);
         this.entityData.define(syncedPitchAngle, initialAngle);
         this.entityData.define(syncedRollAngle, initialAngle);
         this.entityData.define(syncedYawAngle, initialAngle);
