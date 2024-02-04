@@ -132,6 +132,7 @@ public class GenericDrone extends Mob{
     }
 
     private void calculateStabilization() {
+        //Controller PID
         float Kp = 0.1F;  // Costante proporzionale
         float Ki = 0.00000001F; // Costante integrale
         float Kd = 0.5F;   // Costante derivativa
@@ -262,6 +263,7 @@ public class GenericDrone extends Mob{
                 for (Entity passenger : this.getPassengers()) {
                     isPassenger = passenger == collidingEntity;
                 }
+
                 if (isPassenger) continue;
                 Vec3 vec = collidingEntity.getDeltaMovement();
                 collidingEntity.setPos(collidingEntity.getX(),this.getY() + this.getBoundingBox().getYsize(),collidingEntity.getZ());
@@ -422,14 +424,12 @@ public class GenericDrone extends Mob{
     }
 
 
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event ){
-        Player player = event.getEntity();
-        Entity entity = event.getTarget();
-        ItemStack itemStack = player.getMainHandItem();
-        if (entity instanceof GenericDrone genericDrone && itemStack.isEmpty()){
-            player.startRiding(entity);
 
+    public void onEntityInteract(PlayerInteractEvent.EntityInteract event){
+        Player player = event.getEntity();
+        ItemStack itemStack = player.getMainHandItem();
+        if (itemStack.isEmpty()){
+            player.startRiding(this);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.Gr00ze.drones_mod.network;
 
+import com.Gr00ze.drones_mod.entities.Drone;
 import com.Gr00ze.drones_mod.entities.GenericDrone;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -54,9 +55,13 @@ public class PlayerControlsPacket {
                 Entity entity = world.getEntity(entityId); // Ottieni l'entità dal suo ID
 
                 if (entity != null) {
-                    GenericDrone genericDrone = (GenericDrone)entity;
-                    genericDrone.driverWantGoUp(isJumpKeyPressed);
-                    genericDrone.driverWantGoDown(isDownKeyPressed);
+                    if (entity instanceof GenericDrone genericDrone) {
+                        genericDrone.driverWantGoUp(isJumpKeyPressed);
+                        genericDrone.driverWantGoDown(isDownKeyPressed);
+                    }
+                    if (entity instanceof Drone drone) {
+
+                    }
                 }
             }
 

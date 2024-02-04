@@ -1,5 +1,6 @@
 package com.Gr00ze.drones_mod.network;
 
+import com.Gr00ze.drones_mod.entities.Drone;
 import com.Gr00ze.drones_mod.entities.GenericDrone;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -54,10 +55,10 @@ public record ControllerPacket(int entityId, int rotorId, float rotorSpeed) {
                         case 4:
                             genericDrone.setW4(verticalSpeed);
                             break;
-
                     }
-
-
+                }
+                if (entity instanceof Drone drone) {
+                    drone.setMotorForce(msg.rotorId, verticalSpeed);
                 }
             }
 

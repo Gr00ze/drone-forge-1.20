@@ -3,6 +3,7 @@ package com.Gr00ze.drones_mod.events;
 import com.Gr00ze.drones_mod.client.*;
 import com.Gr00ze.drones_mod.entities.EntityInit;
 
+import com.Gr00ze.drones_mod.entities.GenericDrone;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -19,16 +20,14 @@ public class ClientEvents {
     @SubscribeEvent
     public static void registerRenderers (EntityRenderersEvent.RegisterRenderers event){
         event.registerEntityRenderer(EntityInit.GENERIC_DRONE.get(), GenericDroneRendering::new);
-        event.registerEntityRenderer(EntityInit.HORSE_DRONE.get(), HorseDroneRendering::new);
-        event.registerEntityRenderer(EntityInit.BOAT_DRONE.get(), BoatDroneRendering::new);
         event.registerEntityRenderer(EntityInit.ENTITY_DRONE.get(), EntityDroneRenderer::new);
+        event.registerEntityRenderer(EntityInit.DRONE.get(), DroneRenderer::new);
     }
 
     @SubscribeEvent
     public static void registerModels (EntityRenderersEvent.RegisterLayerDefinitions event){
         event.registerLayerDefinition(GenericDroneModel.MODEL_LAYER, GenericDroneModel::createBodyLayer);
-        event.registerLayerDefinition(HorseDroneModel.MODEL_LAYER, HorseDroneModel::createBodyLayer);
-        event.registerLayerDefinition(BoatDroneModel.MODEL_LAYER, BoatDroneModel::createBodyLayer);
+        event.registerLayerDefinition(DroneModel.MODEL_LAYER, DroneModel::createBodyLayer);
     }
 
 

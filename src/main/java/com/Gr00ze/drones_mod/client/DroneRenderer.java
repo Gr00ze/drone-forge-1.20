@@ -11,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import static com.Gr00ze.drones_mod.DronesMod.MOD_ID;
 
 @OnlyIn(Dist.CLIENT)
-public class HorseDroneRendering<M extends Mob> extends MobRenderer<M, GenericDroneModel<M>> {
+public class DroneRenderer<M extends Mob> extends MobRenderer<M,DroneModel<M>> {
 
     ResourceLocation TEXTURE = new ResourceLocation(MOD_ID,"textures/entities/generic_drone.png");
 
-    public HorseDroneRendering(EntityRendererProvider.Context erpC) {
-        super(erpC, new GenericDroneModel<>(erpC.bakeLayer(GenericDroneModel.MODEL_LAYER)), 0);
+    public DroneRenderer(EntityRendererProvider.Context erpC) {
+        super(erpC, new DroneModel<>(erpC.bakeLayer(DroneModel.MODEL_LAYER)), 0);
     }
 
 
@@ -25,3 +25,5 @@ public class HorseDroneRendering<M extends Mob> extends MobRenderer<M, GenericDr
         return TEXTURE;
     }
 }
+
+

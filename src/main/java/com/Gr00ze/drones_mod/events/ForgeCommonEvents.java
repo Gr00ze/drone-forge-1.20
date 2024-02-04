@@ -1,7 +1,10 @@
 package com.Gr00ze.drones_mod.events;
 
+import com.Gr00ze.drones_mod.entities.AbstractDrone;
+import com.Gr00ze.drones_mod.entities.GenericDrone;
 import com.Gr00ze.drones_mod.items.DroneController;
 import com.Gr00ze.drones_mod.items.DroneFrame;
+import com.Gr00ze.drones_mod.items.GenericDroneController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -27,9 +30,20 @@ public class ForgeCommonEvents {
         Player player = event.getEntity();
         Entity entity = event.getTarget();
         ItemStack itemStack = player.getMainHandItem();
+        if (entity instanceof AbstractDrone drone){
+            drone.onEntityInteract(event);
+        }
+        if (entity instanceof GenericDrone drone){
+            drone.onEntityInteract(event);
+        }
         if (itemStack.getItem() instanceof DroneController controller){
             controller.onEntityInteract(event);
         }
+        if (itemStack.getItem() instanceof GenericDroneController controller){
+            controller.onEntityInteract(event);
+        }
+
+
     }
 
 

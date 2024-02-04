@@ -1,6 +1,5 @@
 package com.Gr00ze.drones_mod.items;
 
-import com.Gr00ze.drones_mod.entities.AbstractDrone;
 import com.Gr00ze.drones_mod.entities.GenericDrone;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -10,18 +9,21 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 
-public class DroneController extends Item {
-    public DroneController() {
-        super(new Item.Properties());
+public class GenericDroneController extends Item {
+
+    public GenericDrone genericDrone;
+
+    public GenericDroneController() {
+        super(new Properties());
     }
 
-    public void onEntityInteract(PlayerInteractEvent.EntityInteract event){
+    public void onEntityInteract(PlayerInteractEvent.EntityInteract event ){
         Player player = event.getEntity();
         Entity entity = event.getTarget();
         ItemStack itemStack = player.getMainHandItem();
-        boolean isDrone = entity instanceof AbstractDrone;
-        boolean isController = itemStack.getItem() instanceof DroneController;
-        if(!isController)
+        boolean isDrone = entity instanceof GenericDrone;
+        boolean isDebugStuff = itemStack.getItem() instanceof GenericDroneController;
+        if(!isDebugStuff)
             return;
         if(!player.isCrouching())
             return;
@@ -33,14 +35,17 @@ public class DroneController extends Item {
         }else{
             System.out.println(("EI: Server: id set "+entity.getId()));
         }
+
+
     }
 
     public void onRightClick(ItemStack itemStack){
+
 
     }
 
 
     public static void registerEvents() {
-        MinecraftForge.EVENT_BUS.register(DroneController.class);
+        MinecraftForge.EVENT_BUS.register(GenericDroneController.class);
     }
 }

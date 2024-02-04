@@ -5,7 +5,7 @@ import com.Gr00ze.drones_mod.entities.EntityInit;
 
 import com.Gr00ze.drones_mod.gui.MyMenu;
 import com.Gr00ze.drones_mod.items.DroneCreativeTab;
-import com.Gr00ze.drones_mod.network.ControllerPacketHandler;
+import com.Gr00ze.drones_mod.network.PacketHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -25,7 +25,28 @@ public class DronesMod {
         com.Gr00ze.drones_mod.items.Init.register(modEventbus);
         MyMenu.register(modEventbus);
         DroneCreativeTab.register(modEventbus);
-        ControllerPacketHandler.init();
+        PacketHandler.init();
+//////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 

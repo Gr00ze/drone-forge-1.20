@@ -1,9 +1,7 @@
 package com.Gr00ze.drones_mod.network;
 
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.repository.Pack;
 import net.minecraftforge.network.Channel;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
@@ -11,7 +9,7 @@ import net.minecraftforge.network.SimpleChannel;
 
 import static com.Gr00ze.drones_mod.DronesMod.MOD_ID;
 
-public class ControllerPacketHandler {
+public class PacketHandler {
     private static final int PROTOCOL_VERSION = 1;
     public static final SimpleChannel CHANNEL = ChannelBuilder.named(
             new ResourceLocation(MOD_ID, "main"))
@@ -19,7 +17,7 @@ public class ControllerPacketHandler {
             .clientAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION))
             .serverAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION))
             .optional()
-            .connectionHandler(ControllerPacketHandler::connectionHandler)
+            .connectionHandler(PacketHandler::connectionHandler)
             .simpleChannel();
 
     public static void init() {

@@ -1,11 +1,8 @@
 package com.Gr00ze.drones_mod.gui;
 
-import com.Gr00ze.drones_mod.entities.AbstractDrone;
 import com.Gr00ze.drones_mod.entities.GenericDrone;
-import com.Gr00ze.drones_mod.entities.controllers.PIDController;
 import com.Gr00ze.drones_mod.network.ControllerPacket;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
@@ -17,19 +14,19 @@ import java.util.Map;
 
 import static com.Gr00ze.drones_mod.network.PacketHandler.sendToServer;
 
-public class ControllerScreen extends UtilityScreen{
-    private final int droneId;
-    private final AbstractDrone drone;
+public class GenericControllerScreen extends UtilityScreen{
+    private final int genericDroneId;
+    private final GenericDrone genericDrone;
 
 
     public static float speedModifier = 0.078F * 5;
 
 
 
-    public ControllerScreen(int droneId, AbstractDrone drone) {
+    public GenericControllerScreen(int genericDroneId, GenericDrone entity) {
         super(Component.literal("Titolo"));
-        this.droneId = droneId;
-        this.drone = drone;
+        this.genericDroneId = genericDroneId;
+        this.genericDrone = entity;
         this.height = 20;
         this.width = 20;
 
@@ -44,13 +41,13 @@ public class ControllerScreen extends UtilityScreen{
         int offsetY = 0;
 
         Dimension genericButtonDimension = new Dimension(61, 15);
-        if (drone == null){return;}
+        if (genericDrone == null){return;}
         for (int i = 0; i < 4; i++) {
             Point buttonPositionUp = new Point(width - 2 * genericButtonDimension.width,  offsetY);
             offsetY += genericButtonDimension.height;
             Point buttonPositionDown = new Point(width - genericButtonDimension.width , buttonPositionUp.y);
 
-            int finalI = i+1;
+            int finalI = i;
             addButton("Up"+ (i + 1), button -> adjustMotors(new int[]{finalI},true), buttonPositionUp, genericButtonDimension, null);
 
             addButton("Down"+ (i + 1), button -> adjustMotors(new int[]{finalI},false), buttonPositionDown, genericButtonDimension, null);
@@ -90,69 +87,25 @@ public class ControllerScreen extends UtilityScreen{
                 adjustMotors(motorPairs[1], true);
             }, angleButtonPositionDown, genericButtonDimension, null);
         }
-        /////////////////////////////////
-//        Point editBoxPosition =  new Point(width - 2 * genericButtonDimension.width , offsetY += genericButtonDimension.height );
-//        EditBox editBox = addEmptyEditBox(font,editBoxPosition.x,editBoxPosition.y, genericButtonDimension.width * 2/3, genericButtonDimension.height);
-//        editBox.setValue(String.format("%f", drone.getAllPIDControllers()[3].Kd));
-//        editBox.setResponder((text)->{});
-//        Point editBoxPosition1 =  new Point(width - 2 * genericButtonDimension.width  + genericButtonDimension.width * 2/3, offsetY);
-//        EditBox editBox1 = addEmptyEditBox(font,editBoxPosition1.x,editBoxPosition1.y, genericButtonDimension.width * 2/3, genericButtonDimension.height);
-//        editBox1.setValue(String.format("%f", drone.getAllPIDControllers()[3].Ki));
-//        editBox1.setResponder((text)->{});
-//        Point editBoxPosition2 =  new Point(width - 2 * genericButtonDimension.width + genericButtonDimension.width * 4/3, offsetY );
-//        EditBox editBox2 = addEmptyEditBox(font,editBoxPosition2.x,editBoxPosition2.y , genericButtonDimension.width * 2/3, genericButtonDimension.height);
-//        editBox2.setValue(String.format("%f", drone.getAllPIDControllers()[3].Kp));
-//        editBox2.setResponder((text)->{});
-        /////////////////////
-        PIDController[] allControllers = drone.getAllPIDControllers();
-        int numberOfControllers = allControllers.length;
-
-
-        for (int i = 0; i < numberOfControllers; i++) {
-            if (allControllers[i] == null) {
-                continue;  // Salta il controller se è nullo
-            }
-            offsetY += genericButtonDimension.height;
-            PIDController.PIDParameter[] parameters = PIDController.PIDParameter.values();
-            for (int j = 0; j < parameters.length; j++) {
-                Point editBoxPosition = new Point(width - 2 * genericButtonDimension.width + j * genericButtonDimension.width * 2/3, offsetY);
-                EditBox editBox = addEmptyEditBox(font, editBoxPosition.x, editBoxPosition.y, genericButtonDimension.width * 2/3, genericButtonDimension.height);
-
-                Double parameterValue = allControllers[i].getParameter(parameters[j]);
-                if (parameterValue != null) {
-                    editBox.setValue(String.format("%.2e", parameterValue));
-                }
-
-                final int index = i;  // Deve essere effettivamente "final" o "effectively final" per essere utilizzato nel lambda
-                final PIDController.PIDParameter param = parameters[j];
-
-
-                // Aggiorna la posizione per la prossima EditBox
-                editBoxPosition.x += genericButtonDimension.width * 2 / 3;
-            }
-
-
-
-        }
-
     }
 
     public void adjustMotors(int[] motorIds, boolean positiveFactor){
         int factor_unit = positiveFactor ? 1 : - 1;
         for (int motorId : motorIds){
-            float actualSpeed = this.drone.getMotorForce(motorId);
-            float rotorSpeed = actualSpeed + speedModifier * factor_unit;
-            System.out.printf("Sending %f to motor %d%n", rotorSpeed, motorId);
-            ControllerPacket packet = new ControllerPacket(this.droneId,motorId, rotorSpeed);
+            float actualSpeed;
+            switch (motorId){
+                case 1: actualSpeed = this.genericDrone.getW1();break;
+                case 2: actualSpeed = this.genericDrone.getW2();break;
+                case 3: actualSpeed = this.genericDrone.getW3();break;
+                case 4: actualSpeed = this.genericDrone.getW4();break;
+                default: return;
+            }
+            ControllerPacket packet = new ControllerPacket(this.genericDroneId,motorId, actualSpeed + speedModifier * factor_unit);
             sendToServer(packet);
         }
 
     }
 
-    @Override
-    protected boolean shouldNarrateNavigation() {
-        return false;
-    }
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
@@ -162,22 +115,19 @@ public class ControllerScreen extends UtilityScreen{
         graphics.fillGradient(2, 2, 200, 200, 0xFF00FF, 0xFF0000);
 
         // Verifica se genericDrone è null
-        if (drone == null) {
+        if (genericDrone == null) {
             // Disegna il testo "NO DRONE SET"
             graphics.drawString(font, "NO DRONE SET", width / 2, height / 2, 0xFFFFFF);
         } else {
             int offsetY = 5;
             // Suggerimenti di velocità e angoli
-            float[] motorSpeeds = drone.getAllMotorForce();
-            Vec3 speed = drone.getDeltaMovement();
-            String motorSpeed = String.format("Speed: m1:%f m2:%f m3:%f m4:%f", motorSpeeds[0], motorSpeeds[1], motorSpeeds[2],motorSpeeds[3]);
+            Vec3 speed = genericDrone.getDeltaMovement();
             String speedHint = String.format("Speed: x:%f y:%f z:%f", speed.x, speed.y, speed.z);
-            String pitchHint = String.format("Pitch: %.2f", drone.getAngle(AbstractDrone.DroneAngle.PITCH));
-            String rollHint = String.format("Roll: %.2f", drone.getAngle(AbstractDrone.DroneAngle.ROLL));
-            String yawHint = String.format("Yaw: %.2f", drone.getAngle(AbstractDrone.DroneAngle.YAW));
+            String pitchHint = String.format("Pitch: %.2f", genericDrone.getPitchAngle());
+            String rollHint = String.format("Roll: %.2f", genericDrone.getRollAngle());
+            String yawHint = String.format("Yaw: %.2f", genericDrone.getYawAngle());
 
-            graphics.drawString(font, motorSpeed, 5, offsetY, 0xFFFFFF);
-            graphics.drawString(font, speedHint, 5, offsetY+= font.lineHeight, 0xFFFFFF);
+            graphics.drawString(font, speedHint, 5, offsetY, 0xFFFFFF);
             graphics.drawString(font, pitchHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
             graphics.drawString(font, rollHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
             graphics.drawString(font, yawHint, 5, offsetY += font.lineHeight, 0xFFFFFF);

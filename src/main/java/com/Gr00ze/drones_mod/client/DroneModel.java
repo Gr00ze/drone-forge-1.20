@@ -1,5 +1,7 @@
 package com.Gr00ze.drones_mod.client;
 
+import com.Gr00ze.drones_mod.entities.Drone;
+import com.Gr00ze.drones_mod.entities.GenericDrone;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.HierarchicalModel;
@@ -8,34 +10,35 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static com.Gr00ze.drones_mod.DronesMod.MOD_ID;
-@OnlyIn(Dist.CLIENT)
-public class HorseDroneModel<M extends Mob> extends HierarchicalModel<M> {
+import static com.Gr00ze.drones_mod.entities.AbstractDrone.DroneAngle.PITCH;
+import static com.Gr00ze.drones_mod.entities.AbstractDrone.DroneAngle.ROLL;
 
-    public static final ModelLayerLocation MODEL_LAYER = new ModelLayerLocation(new ResourceLocation(MOD_ID,"horse_drone_model"),"main");
+
+
+@OnlyIn(Dist.CLIENT)
+public class DroneModel<M extends Mob> extends HierarchicalModel<M> {
+
+    public static final ModelLayerLocation MODEL_LAYER = new ModelLayerLocation(new ResourceLocation(MOD_ID,"generic_drone_model"),"main");
     private final ModelPart frame;
     private final ModelPart root;
     private final ModelPart controls;
     private final ModelPart chair;
     private ModelPart motor1,motor2,motor3,motor4;
 
-    public static AnimationState spinRotor1,spinRotor2,spinRotor3,spinRotor4;
-    public HorseDroneModel(ModelPart root) {
+
+    public DroneModel(ModelPart root) {
         this.root = root;
         this.frame = root.getChild("frame");
         this.controls = frame.getChild("controls");
         this.chair = frame.getChild("chair");
 
-        spinRotor1 = new AnimationState();
-        spinRotor2 = new AnimationState();
-        spinRotor3 = new AnimationState();
-        spinRotor4 = new AnimationState();
+
 
 
     }
@@ -104,15 +107,24 @@ public class HorseDroneModel<M extends Mob> extends HierarchicalModel<M> {
         return LayerDefinition.create(meshdefinition, 256, 256);
     }
 
-    public void setupAnim(@NotNull M mob, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(@NotNull M mob,  float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.root().getAllParts().forEach(ModelPart::resetPose);
+        if (mob instanceof Drone drone) {
+            this.animate(drone.spinRotor1, DroneAnimation.spinRotor1, ageInTicks );
+            this.animate(drone.spinRotor2, DroneAnimation.spinRotor2, ageInTicks );
+            this.animate(drone.spinRotor3, DroneAnimation.spinRotor3, ageInTicks );
+            this.animate(drone.spinRotor4, DroneAnimation.spinRotor4, ageInTicks );
+            //System.out.println(genericDrone.getYawAngle());
+//            frame.yRot=genericDrone.getYawAngle();
+            frame.zRot=drone.getAngle(ROLL);
+            frame.xRot=-drone.getAngle(PITCH);
 
+        }
     }
 
     @Override
     public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
         frame.render(poseStack,vertexConsumer,light,overlay,red,green,blue,alpha);
-
-
     }
 
     @Override
