@@ -170,17 +170,24 @@ public class ControllerScreen extends UtilityScreen{
             // Suggerimenti di velocità e angoli
             float[] motorSpeeds = drone.getAllMotorForce();
             Vec3 speed = drone.getDeltaMovement();
+            PIDController[] controllers = drone.getAllPIDControllers();
             String motorSpeed = String.format("Speed: m1:%f m2:%f m3:%f m4:%f", motorSpeeds[0], motorSpeeds[1], motorSpeeds[2],motorSpeeds[3]);
             String speedHint = String.format("Speed: x:%f y:%f z:%f", speed.x, speed.y, speed.z);
             String pitchHint = String.format("Pitch: %.2f", drone.getAngle(AbstractDrone.DroneAngle.PITCH));
             String rollHint = String.format("Roll: %.2f", drone.getAngle(AbstractDrone.DroneAngle.ROLL));
             String yawHint = String.format("Yaw: %.2f", drone.getAngle(AbstractDrone.DroneAngle.YAW));
+            StringBuilder kParameters = new StringBuilder();
+            for (int i = 0; i < controllers.length; i++) {
+                kParameters.append(String.format("%d: kp: %.2e kd: %.2e kp: %.2e\n", i, controllers[i].Kp, controllers[i].Ki, controllers[i].Kd));
+            }
+
 
             graphics.drawString(font, motorSpeed, 5, offsetY, 0xFFFFFF);
             graphics.drawString(font, speedHint, 5, offsetY+= font.lineHeight, 0xFFFFFF);
             graphics.drawString(font, pitchHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
             graphics.drawString(font, rollHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
             graphics.drawString(font, yawHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
+            graphics.drawString(font, kParameters.toString(), 5, offsetY += font.lineHeight, 0xFFFFFF);
         }
 
         // Itera attraverso gli elementi renderabili presenti nella GUI
