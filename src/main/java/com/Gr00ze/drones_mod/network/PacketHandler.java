@@ -31,17 +31,25 @@ public class PacketHandler {
                 .consumerMainThread(ControllerPacket::handle)
                 .add();
 
+        CHANNEL.messageBuilder(ControllerPacket2.class, id++)
+                .decoder(ControllerPacket2::decode)
+                .encoder(ControllerPacket2::encode)
+                .consumerNetworkThread(ControllerPacket2::handle)
+                .consumerMainThread(ControllerPacket2::handle)
+                .add();
+
+
+
         CHANNEL.messageBuilder(PlayerControlsPacket.class, id++)
                 .decoder(PlayerControlsPacket::decode)
                 .encoder(PlayerControlsPacket::encode)
                 .consumerNetworkThread(PlayerControlsPacket::handle)
                 .consumerMainThread(PlayerControlsPacket::handle)
                 .add();
-
     }
+
     public static void connectionHandler(Connection connection){
         System.out.println("Ero nascosto");
-
     }
 
     public static void sendToServer(Object packet){
