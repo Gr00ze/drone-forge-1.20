@@ -4,6 +4,7 @@ import com.Gr00ze.drones_mod.entities.AbstractDrone;
 import com.Gr00ze.drones_mod.entities.GenericDrone;
 import com.Gr00ze.drones_mod.entities.controllers.PIDController;
 import com.Gr00ze.drones_mod.network.ControllerPacket;
+import com.Gr00ze.drones_mod.network.ControllerPacket2;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.Gr00ze.drones_mod.network.PacketHandler.CHANNEL;
 import static com.Gr00ze.drones_mod.network.PacketHandler.sendToServer;
 
 public class ControllerScreen extends UtilityScreen{
@@ -90,20 +92,7 @@ public class ControllerScreen extends UtilityScreen{
                 adjustMotors(motorPairs[1], true);
             }, angleButtonPositionDown, genericButtonDimension, null);
         }
-        /////////////////////////////////
-//        Point editBoxPosition =  new Point(width - 2 * genericButtonDimension.width , offsetY += genericButtonDimension.height );
-//        EditBox editBox = addEmptyEditBox(font,editBoxPosition.x,editBoxPosition.y, genericButtonDimension.width * 2/3, genericButtonDimension.height);
-//        editBox.setValue(String.format("%f", drone.getAllPIDControllers()[3].Kd));
-//        editBox.setResponder((text)->{});
-//        Point editBoxPosition1 =  new Point(width - 2 * genericButtonDimension.width  + genericButtonDimension.width * 2/3, offsetY);
-//        EditBox editBox1 = addEmptyEditBox(font,editBoxPosition1.x,editBoxPosition1.y, genericButtonDimension.width * 2/3, genericButtonDimension.height);
-//        editBox1.setValue(String.format("%f", drone.getAllPIDControllers()[3].Ki));
-//        editBox1.setResponder((text)->{});
-//        Point editBoxPosition2 =  new Point(width - 2 * genericButtonDimension.width + genericButtonDimension.width * 4/3, offsetY );
-//        EditBox editBox2 = addEmptyEditBox(font,editBoxPosition2.x,editBoxPosition2.y , genericButtonDimension.width * 2/3, genericButtonDimension.height);
-//        editBox2.setValue(String.format("%f", drone.getAllPIDControllers()[3].Kp));
-//        editBox2.setResponder((text)->{});
-        /////////////////////
+
         PIDController[] allControllers = drone.getAllPIDControllers();
         int numberOfControllers = allControllers.length;
 
@@ -117,6 +106,18 @@ public class ControllerScreen extends UtilityScreen{
             for (int j = 0; j < parameters.length; j++) {
                 Point editBoxPosition = new Point(width - 2 * genericButtonDimension.width + j * genericButtonDimension.width * 2/3, offsetY);
                 EditBox editBox = addEmptyEditBox(font, editBoxPosition.x, editBoxPosition.y, genericButtonDimension.width * 2/3, genericButtonDimension.height);
+                int finalJ = j;
+                int finalI = i;
+                editBox.setResponder((text)->{
+                    if (!text.endsWith("F")) return;
+                    try {
+                        float value = Float.parseFloat(text.substring(0,text.length()-2));
+                        sendToServer(new ControllerPacket2(droneId, finalI, parameters[finalJ], value));
+
+                    } catch (NumberFormatException e){
+                        System.out.printf("Invalid value given: %s\n", text);
+                    }
+                });
 
                 Double parameterValue = allControllers[i].getParameter(parameters[j]);
                 if (parameterValue != null) {
@@ -178,6 +179,7 @@ public class ControllerScreen extends UtilityScreen{
             String yawHint = String.format("Yaw: %.2f", drone.getAngle(AbstractDrone.DroneAngle.YAW));
             StringBuilder kParameters = new StringBuilder();
             for (int i = 0; i < controllers.length; i++) {
+                if (controllers[i]==null)continue;
                 kParameters.append(String.format("%d: kp: %.2e kd: %.2e kp: %.2e\n", i, controllers[i].Kp, controllers[i].Ki, controllers[i].Kd));
             }
 
