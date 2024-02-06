@@ -1,7 +1,7 @@
 package com.Gr00ze.drones_mod.entities.controllers;
 
 public class PIDController {
-    public void set(float value, PIDParameter parameterType) {
+    public void set(double value, PIDParameter parameterType) {
         switch (parameterType) {
             case KP:
                 this.Kp = value;

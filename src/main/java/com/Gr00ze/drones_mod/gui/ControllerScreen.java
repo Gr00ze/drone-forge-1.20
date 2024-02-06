@@ -111,7 +111,8 @@ public class ControllerScreen extends UtilityScreen{
                 editBox.setResponder((text)->{
                     if (!text.endsWith("F")) return;
                     try {
-                        float value = Float.parseFloat(text.substring(0,text.length()-2));
+                        float value = Float.parseFloat(text.substring(0,text.length()-1));
+                        System.out.printf("Value given: %.2e\n", value);
                         sendToServer(new ControllerPacket2(droneId, finalI, parameters[finalJ], value));
 
                     } catch (NumberFormatException e){

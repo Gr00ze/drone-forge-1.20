@@ -9,18 +9,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-public record ControllerPacket2(int entityId,int controllerId, PIDController.PIDParameter parameterType, float value) {
+public record ControllerPacket2(int entityId,int controllerId, PIDController.PIDParameter parameterType, double value) {
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(this.entityId);
         buf.writeInt(this.controllerId);
         buf.writeEnum(this.parameterType);
-        buf.writeFloat(this.value);
+        buf.writeDouble(this.value);
     }
     public static ControllerPacket2 decode(FriendlyByteBuf buf) {
         int entityId = buf.readInt();
         int controllerId = buf.readInt();
         PIDController.PIDParameter parameter = buf.readEnum(PIDController.PIDParameter.class);
-        float value = buf.readFloat();
+        double value = buf.readDouble();
         return new ControllerPacket2(entityId, controllerId, parameter, value);
     }
 
@@ -32,7 +32,7 @@ public record ControllerPacket2(int entityId,int controllerId, PIDController.PID
             // Do stuff
             int entityId = msg.entityId();
             int controllerId = msg.controllerId();
-            float value = msg.value();
+            double value = msg.value();
 
             if (sender != null) {
                 ServerLevel world = sender.serverLevel(); // Ottieni il mondo in cui si trova il giocatore
@@ -41,7 +41,7 @@ public record ControllerPacket2(int entityId,int controllerId, PIDController.PID
 
                 if (entity instanceof Drone drone) {
                     drone.setKParameter(value,msg.parameterType,msg.controllerId);
-
+                    System.out.printf("Set value %.2e for %s in cId %d", value, msg.parameterType, msg.controllerId);
 
 
                 }

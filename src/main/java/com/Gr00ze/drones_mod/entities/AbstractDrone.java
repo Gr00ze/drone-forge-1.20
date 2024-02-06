@@ -182,7 +182,7 @@ public abstract class AbstractDrone extends Mob {
         return new PIDController[]{yawPID,rollPID,pitchPID,verticalPID};
     }
 
-    public void setKParameter(float value, PIDController.PIDParameter parameterType, int controllerId) {
+    public void setKParameter(double value, PIDController.PIDParameter parameterType, int controllerId) {
         //controllerId should be an enum
         switch (controllerId){
             case 0: yawPID.set(value,parameterType);break;
