@@ -177,11 +177,7 @@ public class ControllerScreen extends UtilityScreen{
             String pitchHint = String.format("Pitch: %.2f", drone.getAngle(AbstractDrone.DroneAngle.PITCH));
             String rollHint = String.format("Roll: %.2f", drone.getAngle(AbstractDrone.DroneAngle.ROLL));
             String yawHint = String.format("Yaw: %.2f", drone.getAngle(AbstractDrone.DroneAngle.YAW));
-            StringBuilder kParameters = new StringBuilder();
-            for (int i = 0; i < controllers.length; i++) {
-                if (controllers[i]==null)continue;
-                kParameters.append(String.format("%d: kp: %.2e kd: %.2e kp: %.2e\n", i, controllers[i].Kp, controllers[i].Ki, controllers[i].Kd));
-            }
+
 
 
             graphics.drawString(font, motorSpeed, 5, offsetY, 0xFFFFFF);
@@ -189,7 +185,13 @@ public class ControllerScreen extends UtilityScreen{
             graphics.drawString(font, pitchHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
             graphics.drawString(font, rollHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
             graphics.drawString(font, yawHint, 5, offsetY += font.lineHeight, 0xFFFFFF);
-            graphics.drawString(font, kParameters.toString(), 5, offsetY += font.lineHeight, 0xFFFFFF);
+            for (int i = 0; i < controllers.length; i++) {
+                if (controllers[i]==null)continue;
+                String kParameter = String.format("%d: kp: %.2e kd: %.2e kp: %.2e", i, controllers[i].Kp, controllers[i].Ki, controllers[i].Kd);
+                graphics.drawString(font, kParameter, 5, offsetY += font.lineHeight, 0xFFFFFF);
+            }
+
+
         }
 
         // Itera attraverso gli elementi renderabili presenti nella GUI

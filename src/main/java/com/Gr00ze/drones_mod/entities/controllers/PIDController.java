@@ -1,6 +1,21 @@
 package com.Gr00ze.drones_mod.entities.controllers;
 
 public class PIDController {
+    public void set(float value, PIDParameter parameterType) {
+        switch (parameterType) {
+            case KP:
+                this.Kp = value;
+                break;
+            case KI:
+                this.Ki = value;
+                break;
+            case KD:
+                this.Kd = value;
+                break;
+
+        }
+    }
+
     public  enum PIDParameter{KP,KI,KD}
     public double Kp,Ki,Kd;
     public double errorSum = 0, lastError = 0;

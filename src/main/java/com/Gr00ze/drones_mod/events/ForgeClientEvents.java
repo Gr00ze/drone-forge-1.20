@@ -17,6 +17,8 @@ import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.eventbus.api.Event;
 import org.lwjgl.glfw.GLFW;
 
 import static com.Gr00ze.drones_mod.DronesMod.MOD_ID;
@@ -94,6 +96,14 @@ public class ForgeClientEvents {
         //sus
         //event.getGuiGraphics().drawString(Minecraft.getInstance().font,"SUS",0,0,0xFFFFFF);
     }
+
+    @SubscribeEvent
+    public static void onClientSetup(Event event){
+        //Occorre per tutti gli eventi
+        //System.out.println("Evento generico");
+    }
+
+
 
 
 }

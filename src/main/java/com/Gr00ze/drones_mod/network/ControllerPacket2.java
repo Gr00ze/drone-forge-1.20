@@ -40,19 +40,8 @@ public record ControllerPacket2(int entityId,int controllerId, PIDController.PID
                 // Ottieni l'entità dal suo ID
 
                 if (entity instanceof Drone drone) {
-                    PIDController controller = drone.getAllPIDControllers()[controllerId];
-                    switch (msg.parameterType) {
-                        case KP:
-                            controller.Kp = value;
-                            break;
-                        case KI:
-                            controller.Ki = value;
-                            break;
-                        case KD:
-                            controller.Kd = value;
-                            break;
+                    drone.setKParameter(value,msg.parameterType,msg.controllerId);
 
-                    }
 
 
                 }

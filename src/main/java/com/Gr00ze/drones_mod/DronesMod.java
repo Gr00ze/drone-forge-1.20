@@ -26,29 +26,7 @@ public class DronesMod {
         MyMenu.register(modEventbus);
         DroneCreativeTab.register(modEventbus);
         PacketHandler.init();
-//////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
-    //M
+
 }
