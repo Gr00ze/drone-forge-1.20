@@ -2,6 +2,7 @@ package com.Gr00ze.drones_mod.entities.controllers;
 
 public class PIDController {
     public void set(double value, PIDParameter parameterType) {
+        System.out.printf("Set %.2e to k: %s\n",value, parameterType.toString());
         switch (parameterType) {
             case KP:
                 this.Kp = value;
@@ -12,7 +13,6 @@ public class PIDController {
             case KD:
                 this.Kd = value;
                 break;
-
         }
     }
 

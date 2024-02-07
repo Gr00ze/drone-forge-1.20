@@ -31,7 +31,12 @@ public class DroneController extends Item {
         if(event.getLevel().isClientSide()){
             System.out.println(("EI: Client: id set "+entity.getId()));
         }else{
-            System.out.println(("EI: Server: id set "+entity.getId()));
+            System.out.println(("EI: Server: id set " + entity.getId()));
+            if (entity instanceof AbstractDrone drone){
+                System.out.printf("EI: Server: entity parameters roll kp %.2e\n", drone.getAllPIDControllers()[1].Kp);
+
+            }
+
         }
     }
 
