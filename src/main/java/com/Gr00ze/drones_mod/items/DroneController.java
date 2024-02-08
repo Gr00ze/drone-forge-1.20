@@ -1,7 +1,6 @@
 package com.Gr00ze.drones_mod.items;
 
 import com.Gr00ze.drones_mod.entities.AbstractDrone;
-import com.Gr00ze.drones_mod.entities.GenericDrone;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -34,9 +33,7 @@ public class DroneController extends Item {
             System.out.println(("EI: Server: id set " + entity.getId()));
             if (entity instanceof AbstractDrone drone){
                 System.out.printf("EI: Server: entity parameters roll kp %.2e\n", drone.getAllPIDControllers()[1].Kp);
-
             }
-
         }
     }
 
