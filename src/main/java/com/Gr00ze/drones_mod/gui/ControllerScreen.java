@@ -1,10 +1,9 @@
 package com.Gr00ze.drones_mod.gui;
 
 import com.Gr00ze.drones_mod.entities.AbstractDrone;
-import com.Gr00ze.drones_mod.entities.GenericDrone;
 import com.Gr00ze.drones_mod.entities.controllers.PIDController;
 import com.Gr00ze.drones_mod.network.ControllerPacket;
-import com.Gr00ze.drones_mod.network.ControllerPacket2;
+import com.Gr00ze.drones_mod.network.ConfigKParameterPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
@@ -16,7 +15,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.Gr00ze.drones_mod.network.PacketHandler.CHANNEL;
 import static com.Gr00ze.drones_mod.network.PacketHandler.sendToServer;
 public class ControllerScreen extends UtilityScreen{
     private final int droneId;
@@ -86,7 +84,7 @@ public class ControllerScreen extends UtilityScreen{
                     try {
                         float value = Float.parseFloat(text.substring(0,text.length()-1));
                         System.out.printf("Value given: %.2e\n", value);
-                        sendToServer(new ControllerPacket2(droneId, finalI, parameters[finalJ], value));
+                        sendToServer(new ConfigKParameterPacket(droneId, finalI, parameters[finalJ], value));
                     } catch (NumberFormatException e){
                         System.out.printf("Invalid value given: %s\n", text);
                     }

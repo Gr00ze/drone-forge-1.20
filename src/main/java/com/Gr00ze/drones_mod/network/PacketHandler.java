@@ -31,11 +31,11 @@ public class PacketHandler {
                 .consumerMainThread(ControllerPacket::handle)
                 .add();
 
-        CHANNEL.messageBuilder(ControllerPacket2.class, id++)
-                .decoder(ControllerPacket2::decode)
-                .encoder(ControllerPacket2::encode)
-                .consumerNetworkThread(ControllerPacket2::handle)
-                .consumerMainThread(ControllerPacket2::handle)
+        CHANNEL.messageBuilder(ConfigKParameterPacket.class, id++)
+                .decoder(ConfigKParameterPacket::decode)
+                .encoder(ConfigKParameterPacket::encode)
+                .consumerNetworkThread(ConfigKParameterPacket::handle)
+                .consumerMainThread(ConfigKParameterPacket::handle)
                 .add();
 
 
