@@ -13,6 +13,8 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
+import static com.Gr00ze.drones_mod.DronesMod.printDebug;
+
 public class Drone extends AbstractDrone{
 
 
@@ -31,6 +33,10 @@ public class Drone extends AbstractDrone{
         calculateRotationAngle();
         calculateMovement();
         calculatePilotInput();
+        if(tickCount%80 == 0){
+            printDebug(this.level().isClientSide,"verticalPID %f %f %f\n",verticalPID.Kd, verticalPID.Ki, verticalPID.Kp);
+
+        }
     }
 
     private void calculateCollision() {

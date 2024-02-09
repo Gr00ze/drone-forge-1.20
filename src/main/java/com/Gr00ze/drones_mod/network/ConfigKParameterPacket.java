@@ -10,6 +10,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.PacketDistributor;
 
+import static com.Gr00ze.drones_mod.DronesMod.printDebug;
+
 public record ConfigKParameterPacket(int entityId, int controllerId, PIDController.PIDParameter parameterType, double value) {
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(this.entityId);
@@ -27,29 +29,35 @@ public record ConfigKParameterPacket(int entityId, int controllerId, PIDControll
 
     public static void handle(ConfigKParameterPacket msg, CustomPayloadEvent.Context ctx) {
         ctx.enqueueWork(() -> {
-            System.out.println("Handling message: " + msg.getClass());
+            printDebug(ctx.isClientSide(),"Handling message: %s", msg.getClass());
             // Work that needs to be thread-safe (most work)
-            ServerPlayer sender = ctx.getSender(); // the client that sent this packet
-            System.out.printf("Sender: %s\n", sender);
+
+            ServerPlayer sender = ctx.getSender();
+            printDebug(ctx.isClientSide(),"Sender: %s", sender);
+            boolean isClient = ctx.isClientSide();
+            Level level = isClient ? Minecraft.getInstance().level : ctx.getSender().serverLevel();
+            if(level == null)
+                throw new IllegalStateException(ConfigKParameterPacket.class +":Level is null");
+
             // Do stuff
             int entityId = msg.entityId();
             int controllerId = msg.controllerId();
             double value = msg.value();
-            Level level = Minecraft.getInstance().level;
-            if(level == null)
-                throw new IllegalStateException(ConfigKParameterPacket.class +":Level is null");
 
-            Entity entity = Minecraft.getInstance().level.getEntity(entityId);
+            //errore
+            Entity entity = level.getEntity(entityId);
 
             if (entity instanceof Drone drone) {
                 drone.setKParameter(value, msg.parameterType, msg.controllerId);
-                System.out.printf("Set value %.2e for %s in cId %d\n", value, msg.parameterType, msg.controllerId);
+                printDebug(ctx.isClientSide(),"Set value %.2e for %s in cId %d\n", value, msg.parameterType, msg.controllerId);
             }
 
             // Verifica se il codice è eseguito sul server prima di inviare il pacchetto
             if (ctx.getDirection().getReceptionSide().isServer()) {
                 // Invia il pacchetto solo se il codice è eseguito sul server
-                System.out.println("Invio i pacchetti ai client");
+                printDebug(ctx.isClientSide(),"Invio i pacchetti ai client");
+
+
                 PacketHandler.CHANNEL.send( new ConfigKParameterPacket(entityId, controllerId, msg.parameterType, value), PacketDistributor.ALL.noArg());
             }
 

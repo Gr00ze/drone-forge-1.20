@@ -13,11 +13,11 @@ import static com.Gr00ze.drones_mod.items.Init.*;
 
 public class DroneCreativeTab {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB,MOD_ID);
-    public static final RegistryObject<CreativeModeTab> EXAMPLE_TAB = TABS.register("example", () -> CreativeModeTab.builder()
+    public static final RegistryObject<CreativeModeTab> EXAMPLE_TAB = TABS.register("main_tab", () -> CreativeModeTab.builder()
             // Set name of tab to display
-            .title(Component.translatable("item_group." + MOD_ID + ".example"))
+            .title(Component.translatable("item_group." + MOD_ID + ".main_tab"))
             // Set icon of creative tab
-            .icon(() -> new ItemStack(DRONE_FRAME.get()))
+            .icon(() -> new ItemStack(DRONE_CONTROLLER.get()))
             // Add default items to tab
             .displayItems((params, output) -> {
                 output.accept(DRONE_FRAME.get());

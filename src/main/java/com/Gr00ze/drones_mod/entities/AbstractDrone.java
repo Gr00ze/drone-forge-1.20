@@ -12,6 +12,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import static com.Gr00ze.drones_mod.DronesMod.printDebug;
+
 public abstract class AbstractDrone extends Mob {
 
 
@@ -149,7 +151,7 @@ public abstract class AbstractDrone extends Mob {
         pitchPID = new PIDController( 0.1F,0.00000001F, 0.5F);
         verticalPID = new PIDController( 0.01F,0F, 0.001F);
 
-        System.out.println("added to world ");
+        printDebug(this.level().isClientSide,"Added Drone");
     }
 
 
@@ -190,5 +192,6 @@ public abstract class AbstractDrone extends Mob {
             case 2: pitchPID.set(value,parameterType);break;
             case 3: verticalPID.set(value,parameterType);break;
         }
+        printDebug(this.level().isClientSide(),"SETTER: ControllerId: %d Parameter %s set %.2e",controllerId, parameterType, value);
     }
 }

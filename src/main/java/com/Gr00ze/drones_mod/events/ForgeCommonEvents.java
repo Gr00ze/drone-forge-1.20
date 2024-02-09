@@ -19,6 +19,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import static com.Gr00ze.drones_mod.DronesMod.MOD_ID;
+import static com.Gr00ze.drones_mod.DronesMod.printDebug;
 import static com.Gr00ze.drones_mod.blocks.Blocks.TABLE_BLOCK;
 import static com.Gr00ze.drones_mod.entities.EntityInit.GENERIC_DRONE;
 import static net.minecraft.world.InteractionHand.MAIN_HAND;

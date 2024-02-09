@@ -22,6 +22,7 @@ import net.minecraftforge.eventbus.api.Event;
 import org.lwjgl.glfw.GLFW;
 
 import static com.Gr00ze.drones_mod.DronesMod.MOD_ID;
+import static com.Gr00ze.drones_mod.DronesMod.printDebug;
 import static com.Gr00ze.drones_mod.network.PacketHandler.sendToServer;
 
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
@@ -55,15 +56,17 @@ public class ForgeClientEvents {
         ClientLevel level = Minecraft.getInstance().level;
         Player player = event.getEntity();
         ItemStack itemStack = player.getMainHandItem();
+        boolean isClient = true;
+        if(level == null){
+            printDebug("CLIENT","Found Level Null");
+            return;
+        }
+
         ///////////////////////////////////////////////
         if(itemStack.getItem() instanceof DroneController droneController && !player.isCrouching()){
             droneController.onRightClick(itemStack);
             int entity_id = itemStack.getOrCreateTag().getInt("DRONE_ID");
-            System.out.println(("RE: Client: id set "+entity_id));
-            if (level == null){
-                System.out.println(("RE: Client: level nullo"));
-                return;
-            }
+            printDebug(isClient,"RightClick: id set %d",entity_id);
             Entity entity = level.getEntity(entity_id);
             if (entity instanceof Drone drone){
                 //non fa partire il server
@@ -75,11 +78,7 @@ public class ForgeClientEvents {
         if(itemStack.getItem() instanceof GenericDroneController droneController && !player.isCrouching()){
             droneController.onRightClick(itemStack);
             int entity_id = itemStack.getOrCreateTag().getInt("DRONE_ID");
-            System.out.println(("RE: Client: id set "+entity_id));
-            if (level == null){
-                System.out.println(("RE: Client: level nullo"));
-                return;
-            }
+            printDebug(isClient,"RightClick: id set %d",entity_id);
             Entity entity = level.getEntity(entity_id);
             if (entity instanceof GenericDrone drone){
                 //non fa partire il server

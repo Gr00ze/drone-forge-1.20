@@ -2,7 +2,6 @@ package com.Gr00ze.drones_mod.entities.controllers;
 
 public class PIDController {
     public void set(double value, PIDParameter parameterType) {
-        System.out.printf("Set %.2e to k: %s\n",value, parameterType.toString());
         switch (parameterType) {
             case KP:
                 this.Kp = value;
@@ -16,7 +15,7 @@ public class PIDController {
         }
     }
 
-    public  enum PIDParameter{KP,KI,KD}
+    public enum PIDParameter{KP,KI,KD}
     public double Kp,Ki,Kd;
     public double errorSum = 0, lastError = 0;
 
@@ -42,7 +41,6 @@ public class PIDController {
         errorSum = 0;
         lastError = 0;
     }
-
 
     public Double getParameter(PIDParameter parameter){
         return switch (parameter) {
