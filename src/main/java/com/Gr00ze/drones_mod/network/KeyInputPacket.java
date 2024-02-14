@@ -7,11 +7,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-public record KeyInputPacket(int entityID, int key, int state) {
+public record KeyInputPacket(int entityID, int key, int keyState) {
     public void encode(FriendlyByteBuf buffer){
         buffer.writeInt(entityID);
         buffer.writeInt(key);
-        buffer.writeInt(state);
+        buffer.writeInt(keyState);
     }
 
     public static KeyInputPacket decode(FriendlyByteBuf buffer){
@@ -25,7 +25,7 @@ public record KeyInputPacket(int entityID, int key, int state) {
             ServerLevel level = sender.serverLevel();
             Entity entity = level.getEntity(msg.entityID());
             if (entity instanceof Drone drone){
-                drone.elaborateInput(msg.key(),msg.state());
+                drone.elaborateInput(msg.key(),msg.keyState());
             }
         });
         ctx.setPacketHandled(true);

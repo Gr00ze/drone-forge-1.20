@@ -5,6 +5,7 @@ import com.Gr00ze.drones_mod.entities.GenericDrone;
 import com.Gr00ze.drones_mod.gui.Screens;
 import com.Gr00ze.drones_mod.items.DroneController;
 import com.Gr00ze.drones_mod.items.GenericDroneController;
+import com.Gr00ze.drones_mod.network.KeyInputPacket;
 import com.Gr00ze.drones_mod.network.PlayerControlsPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -42,13 +43,21 @@ public class ForgeClientEvents {
         Player localPlayer = Minecraft.getInstance().player;
         if(localPlayer == null || !localPlayer.isPassenger())return;
         Entity vehicle = localPlayer.getVehicle();
+        ///////////////////////////////////////////////////////////////////
         if (vehicle instanceof GenericDrone genericDrone){
             boolean pressedJump = event.getKey() == GLFW.GLFW_KEY_SPACE && event.getAction() > 0;
             boolean pressedDownKey = event.getKey() == GLFW.GLFW_KEY_LEFT_CONTROL && event.getAction() > 0;
             PlayerControlsPacket packet = new PlayerControlsPacket(genericDrone.getId(),pressedJump,pressedDownKey);
             sendToServer(packet);
         }
-
+        //////////////////////////////////////////////////////////////////
+        if (vehicle instanceof Drone drone){
+            boolean pressedJump = event.getKey() == GLFW.GLFW_KEY_SPACE && event.getAction() > 0;
+            boolean pressedDownKey = event.getKey() == GLFW.GLFW_KEY_LEFT_CONTROL && event.getAction() > 0;
+            //con questa definizione l' evento creera un comportamento indeterminato alla pressione di entrambi i tasti
+            KeyInputPacket packet = new KeyInputPacket(drone.getId(), event.getKey(), event.getAction());
+            sendToServer(packet);
+        }
 
     }
     @SubscribeEvent

@@ -166,5 +166,6 @@ public class Drone extends AbstractDrone{
 
 
     public void elaborateInput(int key, int state) {
+        //received input
     }
 }

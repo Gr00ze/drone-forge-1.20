@@ -46,6 +46,14 @@ public class PacketHandler {
                 .consumerNetworkThread(PlayerControlsPacket::handle)
                 .consumerMainThread(PlayerControlsPacket::handle)
                 .add();
+
+
+        CHANNEL.messageBuilder(KeyInputPacket.class, id++)
+                .decoder(KeyInputPacket::decode)
+                .encoder(KeyInputPacket::encode)
+                .consumerNetworkThread(KeyInputPacket::handle)
+                .consumerMainThread(KeyInputPacket::handle)
+                .add();
     }
 
     public static void connectionHandler(Connection connection){
