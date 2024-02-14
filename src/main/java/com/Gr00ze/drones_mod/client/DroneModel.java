@@ -110,10 +110,10 @@ public class DroneModel<M extends Mob> extends HierarchicalModel<M> {
     public void setupAnim(@NotNull M mob,  float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
         if (mob instanceof Drone drone) {
-            this.animate(drone.spinRotor1, DroneAnimation.spinRotor1, ageInTicks * (int) drone.getMotorForce(1) );
-            this.animate(drone.spinRotor2, DroneAnimation.spinRotor2, ageInTicks * (int) drone.getMotorForce(2) );
-            this.animate(drone.spinRotor3, DroneAnimation.spinRotor3, ageInTicks * (int) drone.getMotorForce(3) );
-            this.animate(drone.spinRotor4, DroneAnimation.spinRotor4, ageInTicks * (int) drone.getMotorForce(4) );
+            this.animate(drone.spinRotor1, DroneAnimation.spinRotor1, ageInTicks * drone.getMotorForce(1) );
+            this.animate(drone.spinRotor2, DroneAnimation.spinRotor2, ageInTicks * drone.getMotorForce(2) );
+            this.animate(drone.spinRotor3, DroneAnimation.spinRotor3, ageInTicks * drone.getMotorForce(3) );
+            this.animate(drone.spinRotor4, DroneAnimation.spinRotor4, ageInTicks * drone.getMotorForce(4) );
             //System.out.println(genericDrone.getYawAngle());
 //            frame.yRot=genericDrone.getYawAngle();
             frame.zRot=drone.getAngle(ROLL);
