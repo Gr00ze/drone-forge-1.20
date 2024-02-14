@@ -33,10 +33,7 @@ public class Drone extends AbstractDrone{
         calculateRotationAngle();
         calculateMovement();
         calculatePilotInput();
-        if(tickCount%80 == 0){
-            printDebug(this.level().isClientSide,"verticalPID %f %f %f\n",verticalPID.Kd, verticalPID.Ki, verticalPID.Kp);
 
-        }
     }
 
     private void calculateCollision() {
@@ -168,4 +165,6 @@ public class Drone extends AbstractDrone{
     }
 
 
+    public void elaborateInput(int key, int state) {
+    }
 }
