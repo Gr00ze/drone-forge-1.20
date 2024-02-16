@@ -105,6 +105,14 @@ public abstract class AbstractDrone extends Mob {
         };
     };
 
+    public float getTotalForce(){
+        float totalForce = 0;
+        for (float force : getAllMotorForce()){
+            totalForce += force;
+        }
+        return totalForce;
+    }
+
     public void setWeight(float weight){
         if (weight > 0){
             this.entityData.set(weightData, weight);
@@ -130,6 +138,7 @@ public abstract class AbstractDrone extends Mob {
     @Override
     protected int calculateFallDamage(float distance, float damageMultiplier) {
         //TO DO dmg should be based on acceleration
+        getAllMotorForce();
         return 1;
     }
 
@@ -149,7 +158,7 @@ public abstract class AbstractDrone extends Mob {
         //yawPID = new PIDController( 0.1F,0.00000001F,0.5F);
         rollPID = new PIDController( 0.1F,0.00000001F,0.5F);
         pitchPID = new PIDController( 0.1F,0.00000001F, 0.5F);
-        verticalPID = new PIDController( 0.01F,0F, 0.001F);
+        verticalPID = new PIDController( 0.01F,0F, 0.5F);
 
         printDebug(this.level().isClientSide,"Added Drone");
     }
