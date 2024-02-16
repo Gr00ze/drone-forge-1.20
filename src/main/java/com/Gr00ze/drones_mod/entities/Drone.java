@@ -37,25 +37,26 @@ public class Drone extends AbstractDrone{
     }
 
     private void manageCollisions(){
-        try (Level level = this.level()){
-            AABB biggerBox = this.getBoundingBox().inflate(0, 0.2, 0);
-            List<Entity> collidingEntities = level.getEntities(this, biggerBox);
-            if(collidingEntities.isEmpty())return;
-            for (Entity collidingEntity : collidingEntities) {
-                boolean isPassenger = false;
-                for (Entity passenger : this.getPassengers()) {
-                    isPassenger = passenger == collidingEntity;
-                }
-                if (isPassenger) continue;
-                Vec3 vec = collidingEntity.getDeltaMovement();
-                collidingEntity.setPos(collidingEntity.getX(),this.getY() + this.getBoundingBox().getYsize(),collidingEntity.getZ());
-                collidingEntity.setDeltaMovement(vec.x,vec.y < 0 ? 0 : vec.y,vec.z);
-                collidingEntity.resetFallDistance();
-                collidingEntity.setOnGround(true);
+        AABB baseBox = this.getBoundingBox();
+        AABB biggerBox = baseBox.inflate(0, 0.2, 0);
+        AABB topBox = baseBox.deflate(0, baseBox.getYsize() - 0.2,0).move(0, 0.4,0);
+        AABB bottomBox = baseBox;
+        List<Entity> collidingEntities = level().getEntities(this, topBox);
+        if(collidingEntities.isEmpty())return;
+        for (Entity collidingEntity : collidingEntities) {
+            boolean isPassenger = false;
+            for (Entity passenger : this.getPassengers()) {
+                isPassenger = passenger == collidingEntity;
             }
-        } catch (IOException ignored) {
-            System.out.println("Drones: Error in collision management");
+            if (isPassenger) continue;
+            Vec3 vec = collidingEntity.getDeltaMovement();
+            collidingEntity.setPos(collidingEntity.getX(),topBox.maxY,collidingEntity.getZ());
+            collidingEntity.setDeltaMovement(vec.x,vec.y < 0 ? 0 : vec.y,vec.z);
+            collidingEntity.resetFallDistance();
+            collidingEntity.setOnGround(true);
+
         }
+
     }
     private void calculateBoundingBox() {
 
