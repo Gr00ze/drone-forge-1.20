@@ -18,7 +18,6 @@ import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.lwjgl.glfw.GLFW;
 
@@ -75,11 +74,10 @@ public class ForgeClientEvents {
             printDebug(isClient,"RightClick: id set %d",entity_id);
             Entity entity = level.getEntity(entity_id);
             if (entity instanceof Drone drone){
-                //non fa partire il server
                 Minecraft.getInstance().setScreen(Screens.getScreen(entity_id, drone));
 
             }
-        };
+        }
         ////////////////////////////////////////
         if(itemStack.getItem() instanceof GenericDroneController droneController && !player.isCrouching()){
             droneController.onRightClick(itemStack);
@@ -87,11 +85,10 @@ public class ForgeClientEvents {
             printDebug(isClient,"RightClick: id set %d",entity_id);
             Entity entity = level.getEntity(entity_id);
             if (entity instanceof GenericDrone drone){
-                //non fa partire il server
                 Minecraft.getInstance().setScreen(Screens.getScreen(entity_id, drone));
 
             }
-        };
+        }
         ////////////////////////////////////////
 
     }
@@ -104,8 +101,7 @@ public class ForgeClientEvents {
 
     @SubscribeEvent
     public static void onClientSetup(Event event){
-        //Occorre per tutti gli eventi
-        //System.out.println("Evento generico");
+        //All events
     }
 
 

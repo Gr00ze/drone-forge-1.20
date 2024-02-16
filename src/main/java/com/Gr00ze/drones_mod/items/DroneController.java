@@ -6,7 +6,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import static com.Gr00ze.drones_mod.DronesMod.printDebug;
 
@@ -42,11 +41,7 @@ public class DroneController extends Item {
     }
 
     public void onRightClick(ItemStack itemStack){
-
+        itemStack.getItem();
     }
 
-
-    public static void registerEvents() {
-        MinecraftForge.EVENT_BUS.register(DroneController.class);
-    }
 }

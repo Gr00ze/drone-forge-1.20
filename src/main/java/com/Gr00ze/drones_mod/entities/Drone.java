@@ -1,21 +1,19 @@
 package com.Gr00ze.drones_mod.entities;
 
-import com.Gr00ze.drones_mod.entities.controllers.PIDController;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
-
-import static com.Gr00ze.drones_mod.DronesMod.printDebug;
 
 public class Drone extends AbstractDrone{
 
@@ -30,7 +28,7 @@ public class Drone extends AbstractDrone{
     @Override
     public void tick() {
         super.tick();
-        //calculateCollision();
+        manageCollisions();
         calculateBoundingBox();
         calculateRotationAngle();
         calculateMovement();
@@ -38,11 +36,12 @@ public class Drone extends AbstractDrone{
 
     }
 
-    private void calculateCollision() {
-        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0, 0.2, 0));
-        if (!list.isEmpty()) {
-
-            for (Entity collidingEntity : list) {
+    private void manageCollisions(){
+        try (Level level = this.level()){
+            AABB biggerBox = this.getBoundingBox().inflate(0, 0.2, 0);
+            List<Entity> collidingEntities = level.getEntities(this, biggerBox);
+            if(collidingEntities.isEmpty())return;
+            for (Entity collidingEntity : collidingEntities) {
                 boolean isPassenger = false;
                 for (Entity passenger : this.getPassengers()) {
                     isPassenger = passenger == collidingEntity;
@@ -54,6 +53,8 @@ public class Drone extends AbstractDrone{
                 collidingEntity.resetFallDistance();
                 collidingEntity.setOnGround(true);
             }
+        } catch (IOException ignored) {
+            System.out.println("Drones: Error in collision management");
         }
     }
     private void calculateBoundingBox() {

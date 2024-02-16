@@ -57,7 +57,7 @@ public abstract class AbstractDrone extends Mob {
             case YAW -> this.entityData.set(yawAngle, value);
             case PITCH -> this.entityData.set(pitchAngle, value);
             case ROLL -> this.entityData.set(rollAngle, value);
-        };
+        }
     }
     public float getAngle(DroneAngle angle){
         return switch (angle) {
@@ -80,7 +80,7 @@ public abstract class AbstractDrone extends Mob {
             case 4 -> this.entityData.set(rotorSpeed4,rotorSpeed);
             case 2 -> this.entityData.set(rotorSpeed2,rotorSpeed);
             default -> throw new IllegalArgumentException("Set: Invalid Motor id. Got: "+id);
-        };
+        }
     }
     public float getMotorForce(int id){
         return switch (id) {
@@ -103,7 +103,7 @@ public abstract class AbstractDrone extends Mob {
                 this.entityData.get(rotorSpeed3),
                 this.entityData.get(rotorSpeed4)
         };
-    };
+    }
 
     public float getTotalForce(){
         float totalForce = 0;
@@ -117,10 +117,10 @@ public abstract class AbstractDrone extends Mob {
         if (weight > 0){
             this.entityData.set(weightData, weight);
         }
-    };
+    }
     public float getWeight(){
     return this.entityData.get(weightData);
-    };
+    }
 
     public enum DroneAngle {
         ROLL, PITCH, YAW
