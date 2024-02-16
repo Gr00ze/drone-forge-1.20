@@ -97,7 +97,7 @@ public class Drone extends AbstractDrone{
         this.addAngle(DroneAngle.ROLL,  rollSpeed / 40);
         this.addAngle(DroneAngle.PITCH,pitchSpeed / 40);
         this.setYRot((this.getAngle(DroneAngle.YAW) * 180 / Mth.PI));
-    };
+    }
 
     private void calculatePilotInput() {
         List <Entity> passengers = this.getPassengers();
