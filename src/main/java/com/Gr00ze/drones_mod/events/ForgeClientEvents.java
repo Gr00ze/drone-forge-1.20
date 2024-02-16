@@ -52,9 +52,6 @@ public class ForgeClientEvents {
         }
         //////////////////////////////////////////////////////////////////
         if (vehicle instanceof Drone drone){
-            boolean pressedJump = event.getKey() == GLFW.GLFW_KEY_SPACE && event.getAction() > 0;
-            boolean pressedDownKey = event.getKey() == GLFW.GLFW_KEY_LEFT_CONTROL && event.getAction() > 0;
-            //con questa definizione l' evento creera un comportamento indeterminato alla pressione di entrambi i tasti
             KeyInputPacket packet = new KeyInputPacket(drone.getId(), event.getKey(), event.getAction());
             sendToServer(packet);
         }

@@ -10,7 +10,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.Gr00ze.drones_mod.DronesMod.printDebug;
@@ -62,7 +64,7 @@ public class Drone extends AbstractDrone{
         long currentTickTime = this.tickCount; // Tempo attuale (tick corrente)
         float deltaTime = (currentTickTime - lastTickTime) * 0.05f; // Conversione da tick a secondi (20 tick per secondo)
 
-        float totalForce = getMotorForce(1) + getMotorForce(2) + getMotorForce(3) + getMotorForce(4),
+        float totalForce = getTotalForce(),
                 acceleration = totalForce / getWeight(),
                 yaw = this.getAngle(DroneAngle.YAW),
                 pitch = this.getAngle(DroneAngle.PITCH),
@@ -165,7 +167,22 @@ public class Drone extends AbstractDrone{
     }
 
 
-    public void elaborateInput(int key, int state) {
+    public void elaborateInput(int key, int keyState) {
         //received input
+        boolean pressedUpKey = key== GLFW.GLFW_KEY_SPACE && keyState > 0;
+        boolean pressedDownKey = key == GLFW.GLFW_KEY_LEFT_CONTROL && keyState > 0;
+        float force = 0.1F;
+        if(pressedUpKey){
+            addMotorForce(1,force);
+            addMotorForce(2,force);
+            addMotorForce(3,force);
+            addMotorForce(4,force);
+        }
+        if(pressedDownKey){
+            addMotorForce(1,-force);
+            addMotorForce(2,-force);
+            addMotorForce(3,-force);
+            addMotorForce(4,-force);
+        }
     }
 }
