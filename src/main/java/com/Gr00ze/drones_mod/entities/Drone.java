@@ -12,13 +12,16 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import java.io.IOException;
 import java.util.List;
+
+import static com.Gr00ze.drones_mod.entities.AbstractDrone.DroneAngle.YAW;
+import static com.Gr00ze.drones_mod.entities.AbstractDrone.DroneAngle.PITCH;
+import static com.Gr00ze.drones_mod.entities.AbstractDrone.DroneAngle.ROLL;
 
 public class Drone extends AbstractDrone{
 
 
-    Float targetYaw = null;
+
     public Drone(EntityType<? extends Mob> mobType, Level level) {
         super(mobType, level);
     }
@@ -29,7 +32,7 @@ public class Drone extends AbstractDrone{
     public void tick() {
         super.tick();
         manageCollisions();
-        calculateBoundingBox();
+        resizeBoundingBox();
         calculateRotationAngle();
         calculateMovement();
         calculatePilotInput();
@@ -58,7 +61,7 @@ public class Drone extends AbstractDrone{
         }
 
     }
-    private void calculateBoundingBox() {
+    private void resizeBoundingBox() {
 
     }
 
@@ -68,9 +71,9 @@ public class Drone extends AbstractDrone{
 
         float totalForce = getTotalForce(),
                 acceleration = totalForce / getWeight(),
-                yaw = this.getAngle(DroneAngle.YAW),
-                pitch = this.getAngle(DroneAngle.PITCH),
-                roll = this.getAngle(DroneAngle.ROLL),
+                yaw = this.getAngle(YAW),
+                pitch = this.getAngle(PITCH),
+                roll = this.getAngle(ROLL),
                 ax = acceleration * (Mth.sin(roll) * Mth.cos(yaw) + Mth.sin(pitch) * Mth.sin(yaw)),
                 ay = acceleration * Mth.cos(pitch) * Mth.cos(roll),
                 az = acceleration * (Mth.sin(-pitch) * Mth.cos(yaw) + Mth.sin(roll) * Mth.sin(yaw));
@@ -94,10 +97,12 @@ public class Drone extends AbstractDrone{
                 pitchSpeed = (( f2 + f1 ) - ( f3 + f4 )),
                 rollSpeed = (( f1 + f4 ) - ( f2 + f3 )),
                 yawSpeed = (( f1 + f3 ) - ( f2 + f4 ));
-        this.addAngle(DroneAngle.YAW, yawSpeed / 40);
-        this.addAngle(DroneAngle.ROLL,  rollSpeed / 40);
-        this.addAngle(DroneAngle.PITCH,pitchSpeed / 40);
-        this.setYRot((this.getAngle(DroneAngle.YAW) * 180 / Mth.PI));
+        this.addAngle(YAW, yawSpeed / 40);
+        this.addAngle(ROLL,  rollSpeed / 40);
+        this.addAngle(PITCH,pitchSpeed / 40);
+        float polarAngle = (this.getAngle(YAW) * 180 / Mth.PI);
+        this.setYRot(polarAngle);
+        //yBodyRot = polarAngle;
     }
 
     private void calculatePilotInput() {
@@ -106,26 +111,32 @@ public class Drone extends AbstractDrone{
         if (size == 0) return;
         Entity rider = passengers.get(0);
         if (rider instanceof Player playerRider && !playerRider.level().isClientSide()){
-            //System.out.println("playerRider.yya: "+playerRider.yya);
             float incrementSpeed = 0.01F;
 
-            //this.setTargetYawAngle(rider.getYRot()*Mth.PI/180);
-//            if(driverWantGoUp){
-//                this.addW1(incrementSpeed);
-//                this.addW2(incrementSpeed);
-//                this.addW4(incrementSpeed);
-//                this.addW3(incrementSpeed);
-//            }else if(driverWantGoDown) {
-//                this.addW1(-incrementSpeed);
-//                this.addW2(-incrementSpeed);
-//                this.addW4(-incrementSpeed);
-//                this.addW3(-incrementSpeed);
-//            }
-            //instant model rotation
+            //range Player.getYRot: [0 - 360)
+            //range targetYaw: (-inf, + inf);
 
-            targetYaw = rider.getYRot() * Mth.PI / 180;
-            this.setYRot(rider.getYRot());
-            float degreesYawAngle = this.getAngle(DroneAngle.YAW) * 180 / Mth.PI;
+
+
+            int k = 0;
+            float radiantRiderYRot = rider.getYRot() * Mth.PI / 180;
+            if(targetYaw!=null){
+               k = (int) (targetYaw / (2 *Mth.PI));
+               if (targetYaw % (2 * Mth.PI) - radiantRiderYRot > Mth.PI){
+                   targetYaw = targetYaw + ((2 * Mth.PI) - (targetYaw - radiantRiderYRot)) + 2 * k;
+               }else targetYaw = radiantRiderYRot + 2 * k * Mth.PI;
+            }else targetYaw = radiantRiderYRot;
+
+
+
+
+
+
+
+
+
+            //this.setYRot(rider.getYRot());
+            float degreesYawAngle = this.getAngle(YAW) * 180 / Mth.PI;
 
 //            if (rider.getYRot() % 360 - degreesYawAngle % 360 < 180) {
 //                //sx

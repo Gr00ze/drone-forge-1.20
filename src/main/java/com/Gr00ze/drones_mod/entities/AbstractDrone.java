@@ -27,7 +27,11 @@ public abstract class AbstractDrone extends Mob {
         rollAngle = SynchedEntityData.defineId(AbstractDrone.class, EntityDataSerializers.FLOAT),
         weightData = SynchedEntityData.defineId(AbstractDrone.class, EntityDataSerializers.FLOAT);
 
-    protected float lastTickTime, targetYaw = 0;
+    protected float lastTickTime;
+
+    private boolean powerOn;
+
+    Float targetYaw = null;
 
     public AnimationState spinRotor1,spinRotor2,spinRotor3,spinRotor4;
 
@@ -48,7 +52,29 @@ public abstract class AbstractDrone extends Mob {
         this.entityData.define(pitchAngle, initialAngle);
         this.entityData.define(rollAngle, initialAngle);
         this.entityData.define(yawAngle, initialAngle);
-        this.entityData.define(weightData, 2F);
+        this.entityData.define(weightData, 5F);
+    }
+    @Override
+    public void onAddedToWorld() {
+        super.onAddedToWorld();
+
+        spinRotor1 = new AnimationState();
+        spinRotor2 = new AnimationState();
+        spinRotor3 = new AnimationState();
+        spinRotor4 = new AnimationState();
+        spinRotor1.start(this.tickCount);
+        spinRotor2.start(this.tickCount);
+        spinRotor3.start(this.tickCount);
+        spinRotor4.start(this.tickCount);
+
+        yawPID = new PIDController( 0.1F,0.00000001F,0.5F);
+        rollPID = new PIDController( 0.1F,0.00000001F,0.5F);
+        pitchPID = new PIDController( 0.1F,0.00000001F, 0.5F);
+        verticalPID = new PIDController( 0.01F,0F, 0.5F);
+
+
+
+        printDebug(this.level().isClientSide,"Added Drone");
     }
 
 
@@ -138,30 +164,11 @@ public abstract class AbstractDrone extends Mob {
     @Override
     protected int calculateFallDamage(float distance, float damageMultiplier) {
         //TO DO dmg should be based on acceleration
-        getAllMotorForce();
-        return 1;
+
+        return (int) getDeltaMovement().y();
     }
 
-    @Override
-    public void onAddedToWorld() {
-        super.onAddedToWorld();
 
-        spinRotor1 = new AnimationState();
-        spinRotor2 = new AnimationState();
-        spinRotor3 = new AnimationState();
-        spinRotor4 = new AnimationState();
-        spinRotor1.start(this.tickCount);
-        spinRotor2.start(this.tickCount);
-        spinRotor3.start(this.tickCount);
-        spinRotor4.start(this.tickCount);
-
-        //yawPID = new PIDController( 0.1F,0.00000001F,0.5F);
-        rollPID = new PIDController( 0.1F,0.00000001F,0.5F);
-        pitchPID = new PIDController( 0.1F,0.00000001F, 0.5F);
-        verticalPID = new PIDController( 0.01F,0F, 0.5F);
-
-        printDebug(this.level().isClientSide,"Added Drone");
-    }
 
 
     @Override
@@ -169,7 +176,7 @@ public abstract class AbstractDrone extends Mob {
 
         double yawSignal = 0, rollSignal = 0, pitchSignal = 0, verticalSignal = 0;
 
-        if (yawPID != null){
+        if (yawPID != null && targetYaw != null){
             yawSignal = yawPID.calculate(targetYaw,this.getAngle(DroneAngle.YAW));
         }
         if (rollPID != null){

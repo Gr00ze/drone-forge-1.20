@@ -16,9 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static com.Gr00ze.drones_mod.DronesMod.MOD_ID;
-import static com.Gr00ze.drones_mod.entities.AbstractDrone.DroneAngle.PITCH;
-import static com.Gr00ze.drones_mod.entities.AbstractDrone.DroneAngle.ROLL;
-
+import static com.Gr00ze.drones_mod.entities.AbstractDrone.DroneAngle.*;
 
 
 @OnlyIn(Dist.CLIENT)
@@ -115,7 +113,7 @@ public class DroneModel<M extends Mob> extends HierarchicalModel<M> {
             this.animate(drone.spinRotor3, DroneAnimation.spinRotor3, ageInTicks * drone.getMotorForce(3) );
             this.animate(drone.spinRotor4, DroneAnimation.spinRotor4, ageInTicks * drone.getMotorForce(4) );
             //System.out.println(genericDrone.getYawAngle());
-//            frame.yRot=genericDrone.getYawAngle();
+            //root.yRot=drone.getAngle(YAW);
             frame.zRot=drone.getAngle(ROLL);
             frame.xRot=-drone.getAngle(PITCH);
 
