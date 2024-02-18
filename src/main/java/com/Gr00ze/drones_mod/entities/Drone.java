@@ -126,7 +126,7 @@ public class Drone extends AbstractDrone{
                    targetYaw = targetYaw + ((2 * Mth.PI) - (targetYaw - radiantRiderYRot)) + 2 * k;
                }else targetYaw = radiantRiderYRot + 2 * k * Mth.PI;
             }else targetYaw = radiantRiderYRot;
-            //ccc
+            //c
 
 
 
