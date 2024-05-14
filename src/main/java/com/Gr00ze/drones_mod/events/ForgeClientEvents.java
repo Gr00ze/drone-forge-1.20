@@ -1,5 +1,6 @@
 package com.Gr00ze.drones_mod.events;
 
+import com.Gr00ze.drones_mod.entities.AbstractDrone;
 import com.Gr00ze.drones_mod.entities.Drone;
 import com.Gr00ze.drones_mod.entities.GenericDrone;
 import com.Gr00ze.drones_mod.gui.Screens;
@@ -9,6 +10,7 @@ import com.Gr00ze.drones_mod.network.KeyInputPacket;
 import com.Gr00ze.drones_mod.network.PlayerControlsPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -97,6 +99,16 @@ public class ForgeClientEvents {
     public static void onRenderGameOverlay(RenderGuiEvent event) {
         //sus
         //event.getGuiGraphics().drawString(Minecraft.getInstance().font,"SUS",0,0,0xFFFFFF);
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null)return;
+        Entity entity = player.getVehicle();
+        float playerYR = player.getYRot();
+        event.getGuiGraphics().drawString(Minecraft.getInstance().font,"" + playerYR, 0,0,0xFFFFFF);
+        if (entity instanceof Drone drone){
+            float droneYaw = drone.getAngle(AbstractDrone.DroneAngle.YAW) * (float)(180 / Math.PI);
+            event.getGuiGraphics().drawString(Minecraft.getInstance().font,"" + droneYaw, 0,20,0xFFFFFF);
+
+        }
     }
 
     @SubscribeEvent
