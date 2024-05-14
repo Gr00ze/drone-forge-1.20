@@ -116,23 +116,24 @@ public class Drone extends AbstractDrone{
             //range Player.getYRot: [0 - 360)
             //range targetYaw: (-inf, + inf);
 
+            //BUG MEZZO GIRO A SINISTRA O 1 GIRO E MEZZO A DESTRA CAUSA MALFUNZIONAMENTO
 
-
-            int k = 0;
-            float radiantRiderYRot = rider.getYRot() * Mth.PI / 180;
+            int k;
+            //Polar to radians conversion
+            float radianRiderYRot = rider.getYRot() * Mth.PI / 180;
+            targetYaw = radianRiderYRot;
+            /*
             if(targetYaw!=null){
-               k = (int) (targetYaw / (2 *Mth.PI));
-               if (targetYaw % (2 * Mth.PI) - radiantRiderYRot > Mth.PI){
-                   targetYaw = targetYaw + ((2 * Mth.PI) - (targetYaw - radiantRiderYRot)) + 2 * k;
-               }else targetYaw = radiantRiderYRot + 2 * k * Mth.PI;
-            }else targetYaw = radiantRiderYRot;
-            //c
-
-
-
-
-
-
+                // numero di giri effettuati
+                if (targetYaw - radianRiderYRot > Mth.PI) {
+                    targetYaw = targetYaw - (2 * Mth.PI);
+                } else if (targetYaw - radianRiderYRot < -Mth.PI) {
+                    targetYaw = targetYaw + (2 * Mth.PI);
+                }
+            }
+            else
+                targetYaw = radianRiderYRot;
+            */
 
 
 
